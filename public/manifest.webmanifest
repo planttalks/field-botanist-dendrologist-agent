@@ -1,0 +1,9 @@
+{
+  "name": "Field Sheet",
+  "short_name": "Field Sheet",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4efe4",
+  "theme_color": "#234237",
+  "description": "A pocket worksheet for plants and trees."
+}
