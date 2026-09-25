@@ -1,39 +1,73 @@
 "use client"
 
-import { useEffect, useRef, useState, type ReactNode } from "react"
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { ScientificName } from "@/components/scientific-name"
 import {
-  BHL_LABEL,
-  BHL_MISSED,
-  lookupPublishedPlate,
-  type BhlOutcome,
-  type BhlPlate,
-} from "@/lib/bhl"
+  ILLUSTRATION_LABEL,
+  ILLUSTRATION_MISSED,
+  lookupNameImage,
+  storeNameImage,
+  type ImageSource,
+  type NameImage,
+  type NameImageOutcome,
+} from "@/lib/name-image"
 
-type View = BhlOutcome | { state: "loading" }
+type View = NameImageOutcome | { state: "loading" }
 
-function PlateFigure({ plate, onMiss }: { plate: BhlPlate; onMiss: () => void }) {
+function pageLink(source: ImageSource): string {
+  switch (source) {
+    case "commons":
+      return "Open the Wikimedia Commons page"
+    case "trefle":
+      return "Open the Trefle record"
+    case "bhl":
+      return "Open the BHL page"
+    default: {
+      const exhaustive: never = source
+      return exhaustive
+    }
+  }
+}
+
+function titleLabel(source: ImageSource): string {
+  switch (source) {
+    case "commons":
+      return "File title"
+    case "trefle":
+      return "Title"
+    case "bhl":
+      return "Work"
+    default: {
+      const exhaustive: never = source
+      return exhaustive
+    }
+  }
+}
+
+function PlateFigure({ image, onMiss }: { image: NameImage; onMiss: () => void }) {
   return (
     <div className="space-y-2">
-      {/* A published BHL page image. It is not a drawing of this specimen. */}
+      {/* A published file for this name. It is not a drawing of this specimen. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={plate.imageUrl}
-        alt={`${BHL_LABEL} ${plate.queriedName}.`}
+        src={image.imageUrl}
+        alt={`${ILLUSTRATION_LABEL} ${image.queriedName}. Source: ${image.sourceLabel}.`}
         className="max-h-96 w-full object-contain"
         referrerPolicy="no-referrer"
         onError={onMiss}
       />
-      <p className="text-sm leading-relaxed">{BHL_LABEL}</p>
+      <p className="text-sm leading-relaxed">{ILLUSTRATION_LABEL}</p>
+      <p className="text-sm">Source: {image.sourceLabel}.</p>
       <p className="text-sm">
-        Name sought: <ScientificName name={plate.queriedName} />. The sheet name stays.
+        {titleLabel(image.source)}: {image.title}.
       </p>
-      <p className="text-sm leading-relaxed">Work: {plate.title}</p>
-      {plate.creator ? <p className="text-sm">Creator: {plate.creator}.</p> : null}
-      {plate.year ? <p className="text-sm">Year: {plate.year}.</p> : null}
+      {image.credit ? <p className="text-sm">Artist: {image.credit}.</p> : null}
       <p className="text-sm">
-        <a className="underline underline-offset-4" href={plate.pageUrl}>
-          Open the BHL page
+        Name sought: <ScientificName name={image.queriedName} />. The sheet name stays.
+      </p>
+      <p className="text-sm">
+        <a className="underline underline-offset-4" href={image.pageUrl}>
+          {pageLink(image.source)}
         </a>
         .
       </p>
@@ -41,10 +75,10 @@ function PlateFigure({ plate, onMiss }: { plate: BhlPlate; onMiss: () => void })
   )
 }
 
-function storedView(plate: BhlPlate): View {
+function storedView(image: NameImage): View {
   const online = typeof navigator === "undefined" ? true : navigator.onLine
-  if (!online) return { state: "missed", detail: BHL_MISSED }
-  return { state: "shown", plate }
+  if (!online) return { state: "missed", detail: ILLUSTRATION_MISSED }
+  return { state: "shown", image }
 }
 
 export function PublishedPlate({
@@ -53,12 +87,15 @@ export function PublishedPlate({
   onPlate,
 }: {
   name: string | null
-  stored?: BhlPlate | null
-  onPlate?: (plate: BhlPlate | null) => void
+  stored?: NameImage | null
+  onPlate?: (image: NameImage | null) => void
 }) {
   const queried = name?.trim() ?? ""
-  const storedMatch = stored && stored.queriedName === queried ? stored : null
-  const [fetched, setFetched] = useState<{ name: string; outcome: BhlOutcome } | null>(null)
+  const storedMatch = useMemo(
+    () => storeNameImage(stored && stored.queriedName === queried ? stored : null),
+    [stored, queried],
+  )
+  const [fetched, setFetched] = useState<{ name: string; outcome: NameImageOutcome } | null>(null)
   const [missedUrl, setMissedUrl] = useState<string | null>(null)
   const onPlateRef = useRef(onPlate)
 
@@ -79,10 +116,10 @@ export function PublishedPlate({
     const controller = new AbortController()
     let cancelled = false
     const online = typeof navigator === "undefined" ? undefined : navigator.onLine
-    void lookupPublishedPlate(queried, fetch, online, controller.signal).then((outcome) => {
+    void lookupNameImage(queried, fetch, online, controller.signal).then((outcome) => {
       if (cancelled) return
       setFetched({ name: queried, outcome })
-      onPlateRef.current?.(outcome.state === "shown" ? outcome.plate : null)
+      onPlateRef.current?.(outcome.state === "shown" ? outcome.image : null)
     })
     return () => {
       cancelled = true
@@ -96,26 +133,24 @@ export function PublishedPlate({
   else if (!fetched || fetched.name !== queried) view = { state: "loading" }
   else view = fetched.outcome
 
-  const imageMissed = view.state === "shown" && missedUrl === view.plate.imageUrl
+  const imageMissed = view.state === "shown" && missedUrl === view.image.imageUrl
 
   let body: ReactNode
   if (imageMissed) {
-    body = <p className="text-sm">{BHL_MISSED}</p>
+    body = <p className="text-sm">{ILLUSTRATION_MISSED}</p>
   } else {
     switch (view.state) {
       case "loading":
-        body = <p className="text-sm text-muted-foreground">Looking for a published illustration.</p>
+        body = <p className="text-sm text-muted-foreground">Looking for a published illustration of this name.</p>
         break
       case "unnamed":
-        body = <p className="text-sm">No sheet name is set. A published plate is not sought.</p>
+        body = <p className="text-sm">No sheet name is set. A published illustration is not sought.</p>
         break
-      case "skipped":
       case "missed":
-      case "none":
         body = <p className="text-sm">{view.detail}</p>
         break
       case "shown":
-        body = <PlateFigure plate={view.plate} onMiss={() => setMissedUrl(view.plate.imageUrl)} />
+        body = <PlateFigure image={view.image} onMiss={() => setMissedUrl(view.image.imageUrl)} />
         break
       default: {
         const exhaustive: never = view
@@ -128,7 +163,7 @@ export function PublishedPlate({
     <figure className="ink-frame p-3 text-foreground">
       <figcaption className="mb-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 border-b border-foreground/25 pb-2">
         <span className="font-serif text-lg">Published illustration</span>
-        <span className="text-xs">{BHL_LABEL}</span>
+        <span className="text-xs">{ILLUSTRATION_LABEL}</span>
       </figcaption>
       {body}
     </figure>

@@ -168,7 +168,7 @@ export function RecordView({ id }: { id: string }) {
       </div>
       <div className="grid items-start gap-4 md:grid-cols-2">
         <DiagnosticPlate observation={record.observation} />
-        <PublishedPlate name={record.scientificName} stored={record.bhlPlate ?? null} />
+        <PublishedPlate name={record.scientificName} stored={record.nameImage ?? null} />
       </div>
 
       <dl className="grid gap-4 border-y border-foreground/30 py-4 text-sm sm:grid-cols-2">

@@ -15,7 +15,7 @@ Confirm any name intended for publication in [POWO](https://powo.science.kew.org
 - The region may come from the phone, or it may be selected by hand. If place is omitted, no geographic flag is set. A missing GPS point stays missing. Uncertainty in meters is not invented.
 - A photograph may be attached. A warning is shown if the frame is soft, dark or overexposed. The frame may still be kept.
 - Only observed characters are scored. Unknown is not scored as a clash. Score the margin of the lobe, not the sinus.
-- The schematic plate draws only the characters that were marked. A published illustration may sit beside it. That figure is not a drawing of this specimen.
+- The schematic plate draws only the characters that were marked. A published illustration of the sheet name may sit beside it. That figure is not a drawing of this specimen.
 - The pen-and-ink plate is traced from the uploaded views (habit, leaf, flower or fruit, close detail). An empty view stays empty and keeps its label. Measurements and notes are printed as text. They are not drawn.
 - The record stores a ranked name. It stores the traits that fit and the traits that do not fit. A review line is added when a specialist should examine the plant.
 - Poison warnings are given for yew, oleander, castor, bracken, lantana fruit, ginkgo seed and mango sap. The sheet does not state that a plant is edible.
@@ -29,7 +29,7 @@ Records remain in this browser. There is no account. There is no server database
 - It does not invent an organ that was not photographed.
 - It does not invent a vein that was not scored.
 - It does not request a cut or a crushed sample from a healthy plant.
-- It does not call an image detector or a training set. There is no Pl@ntNet call. There is no iNaturalist vision call. When a network is available it does read two published name lists and a GBIF occurrence map. See the backbone section below.
+- It does not call an image detector or a training set. There is no Pl@ntNet call. There is no iNaturalist vision call. It does not generate a plant. When a network is available it reads two published name lists and a GBIF occurrence map. It may also show a published illustration of the sheet name. See the sections below.
 - It does not attach author citations. An incorrect author is omitted.
 
 ## Local use
@@ -49,7 +49,7 @@ npm run build
 
 `npm start` serves a production build on the same port.
 
-After the worksheet copy is stored on the phone, the character key, both plates and the journal open without a network. The GBIF check, the backbone comparison, the distribution map and the published BHL plate do not. A failed copy is not a saved record.
+After the worksheet copy is stored on the phone, the character key, the schematic, the ink plate and the journal open without a network. The GBIF check, the backbone comparison, the distribution map and the published illustration do not. If the phone is offline, the sheet says that the illustration was not retrieved. A failed copy is not a saved record.
 
 ## Backbone check and map
 
@@ -65,10 +65,14 @@ The taxon list is in `src/lib/taxa.ts`. The GBIF name line is in `src/lib/gbif.t
 
 ## Published illustration
 
-The schematic stays. It draws only the characters that were marked. When the sheet has a name, a second figure may show a published illustration of that name. The figure is not a drawing of this specimen. The sheet name is not replaced. A new species is not declared.
+The schematic stays. It draws only the characters that were marked. When the sheet has a name, a second figure may show a published illustration of that name. The figure sits beside the schematic on the result and on a saved record. It is not a drawing of this specimen. The sheet name is not replaced. A new species is not declared.
 
-The public Biodiversity Heritage Library API is `https://www.biodiversitylibrary.org/api3`. The operation is `GetNameMetadata`. That operation requires an API key. This sheet does not send a key. It does not call the API. It says that the BHL check did not run.
+The preferred source is Wikimedia Commons, in the manner of the category [Botanical illustrations](https://commons.wikimedia.org/wiki/Category:Botanical_illustrations). The sheet searches `Category:{name} - botanical illustrations`. It keeps a file whose title contains the sheet name. The figure shows that image, the file title, the artist when the file records one and a link to the Commons page. The label says it is a published illustration of this name, not a drawing of this specimen. The source line says Wikimedia Commons.
 
-If the phone is offline, the sheet says that the published plate was not retrieved. The same sentence is used when a call fails. If a response has no page that BHL marks as an illustration, the sheet says that no published plate was found. The sheet does not draw a stand-in plant.
+Trefle is used only when that search returns no illustration and the Trefle response contains an image file. The documented search is `GET https://trefle.io/api/v1/plants`. It requires an access token. This sheet does not hold a token. A request without a token returns HTTP 401. That response is not an illustration.
 
-A returned image address can be stored with the record. The address is a BHL page image. It is not a photograph of this plant. The reader for that response is in `src/lib/bhl.ts`.
+The Biodiversity Heritage Library API is `https://www.biodiversitylibrary.org/api3`, operation `GetNameMetadata`. A request without a key returns HTTP 401. That response is not an illustration. The sheet does not send a key. A BHL page is shown only when a keyless response contains an illustration file.
+
+If Commons has no illustration, and Trefle and BHL do not return an image file, the sheet says that the illustration was not retrieved. The same sentence is used when the phone is offline. The sheet does not generate a plant and it does not draw a hypothetical one.
+
+A returned image address can be stored with the record. It is a published file for the sheet name. It is not a photograph of this plant. The reader is in `src/lib/name-image.ts`.

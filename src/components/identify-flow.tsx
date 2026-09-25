@@ -8,7 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { storeBhlPlate, type BhlPlate } from "@/lib/bhl"
+import { storeNameImage, type NameImage } from "@/lib/name-image"
 import { missingPointCopy } from "@/lib/geo"
 import { saveSpecimen } from "@/lib/journal"
 import { identify } from "@/lib/identify"
@@ -120,7 +120,7 @@ export function IdentifyFlow() {
   const [plateStatus, setPlateStatus] = useState<"empty" | "loading" | "ready" | "error">("empty")
   const [plateError, setPlateError] = useState("")
   const [chosenTaxonId, setChosenTaxonId] = useState<string | null>(null)
-  const [bhlPlate, setBhlPlate] = useState<BhlPlate | null>(null)
+  const [nameImage, setNameImage] = useState<NameImage | null>(null)
   const plateRequest = useRef(0)
 
   const length = parseMeasure(lengthText)
@@ -379,8 +379,8 @@ export function IdentifyFlow() {
         identification,
         taxonId,
         illustration,
-        bhlPlate: storeBhlPlate(
-          bhlPlate && chosen?.taxon.scientificName === bhlPlate.queriedName ? bhlPlate : null,
+        nameImage: storeNameImage(
+          nameImage && chosen?.taxon.scientificName === nameImage.queriedName ? nameImage : null,
         ),
       })
       setPhotoDropped(record.photoDropped)
@@ -749,7 +749,7 @@ export function IdentifyFlow() {
             plateCaption={copy.caption}
             onChosen={setChosenTaxonId}
             pointMissing={geoStatus === "error" && latitude === null}
-            onBhlPlate={setBhlPlate}
+            onNameImage={setNameImage}
           />
         )
       ) : null}

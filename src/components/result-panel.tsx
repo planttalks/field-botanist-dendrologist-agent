@@ -15,7 +15,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label"
 import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress"
 import { Textarea } from "@/components/ui/textarea"
-import type { BhlPlate } from "@/lib/bhl"
+import type { NameImage } from "@/lib/name-image"
 import type { Identification } from "@/lib/identify"
 import { regionLabel, type Region } from "@/lib/regions"
 import { displayName, taxonById } from "@/lib/taxa"
@@ -49,7 +49,7 @@ export function ResultPanel({
   plateCaption,
   onChosen,
   pointMissing,
-  onBhlPlate,
+  onNameImage,
 }: {
   observation: Observation
   region: Region | null
@@ -72,7 +72,7 @@ export function ResultPanel({
   plateCaption: string
   onChosen: (taxonId: string | null) => void
   pointMissing: boolean
-  onBhlPlate: (plate: BhlPlate | null) => void
+  onNameImage: (image: NameImage | null) => void
 }) {
   const topId = identification.noMatch ? null : (identification.candidates[0]?.taxon.id ?? null)
   const signature = `${identification.noMatch ? "none" : "match"}:${identification.candidates.map((candidate) => candidate.taxon.id).join("|")}`
@@ -100,7 +100,7 @@ export function ResultPanel({
           <DiagnosticPlate observation={observation} />
           <PublishedPlate
             name={chosen && !identification.noMatch ? chosen.taxon.scientificName : null}
-            onPlate={onBhlPlate}
+            onPlate={onNameImage}
           />
         </div>
       </div>
