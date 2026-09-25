@@ -1,6 +1,5 @@
 import assert from "node:assert/strict"
 import { describe, it } from "node:test"
-import { bhlNameMetadataUrl } from "./bhl"
 import {
   ILLUSTRATION_MISSED,
   TREFLE_PLANTS,
@@ -18,7 +17,6 @@ import {
 const OAK = "Quercus robur"
 const PLATE_URL = "https://upload.wikimedia.org/wikipedia/commons/4/40/368_Quercus_robur.jpg"
 const PLATE_PAGE = "https://commons.wikimedia.org/wiki/File:368_Quercus_robur.jpg"
-const TREFLE_FILE = "https://bs.plantnet.org/image/o/robur.jpg"
 const ARTIST_HTML =
   '<bdi><a href="https://en.wikipedia.org/wiki/en:Carl_Axel_Magnus_Lindman" title="w:en:Carl Axel Magnus Lindman"><span title="Swedish botanist (1856-1928)">Carl Axel Magnus Lindman</span></a></bdi>'
 
@@ -143,73 +141,22 @@ describe("published illustration of the sheet name", () => {
     assert.equal(calls.some((call) => call.includes("api.gbif.org")), false)
   })
 
-  it("uses Trefle only when Commons has no illustration and the file loads", async () => {
-    const fetchImpl: typeof fetch = async (input, init) => {
+  it("does not call Trefle or BHL when Commons has no illustration", async () => {
+    const calls: string[] = []
+    const fetchImpl: typeof fetch = async (input) => {
       const url = String(input)
+      calls.push(url)
       if (url.startsWith("https://commons.wikimedia.org/")) return jsonResponse({ query: {} })
-      if (url.startsWith(TREFLE_PLANTS)) {
-        return jsonResponse({
-          data: [{ id: 42, scientific_name: OAK, image_url: TREFLE_FILE, slug: "quercus-robur" }],
-        })
-      }
-      if (url === TREFLE_FILE && init?.method === "HEAD") return imageHead(200)
       throw new Error(`Unexpected call ${url}`)
     }
     const outcome = await lookupNameImage(OAK, fetchImpl, true)
-    assert.equal(outcome.state, "shown")
-    if (outcome.state !== "shown") return
-    assert.equal(outcome.image.source, "trefle")
-    assert.equal(outcome.image.queriedName, OAK)
+    assert.equal(outcome.state, "missed")
+    if (outcome.state === "missed") assert.equal(outcome.detail, ILLUSTRATION_MISSED)
+    assert.equal(calls.some((call) => call.includes("trefle.io")), false)
+    assert.equal(calls.some((call) => call.includes("biodiversitylibrary.org")), false)
   })
 
-  it("uses a BHL plate only when the keyless response contains an image file", async () => {
-    const bhlImage = "https://www.biodiversitylibrary.org/pagethumb/11"
-    const fetchImpl: typeof fetch = async (input, init) => {
-      const url = String(input)
-      if (url.startsWith("https://commons.wikimedia.org/")) return jsonResponse({ query: {} })
-      if (url.startsWith(TREFLE_PLANTS)) {
-        return jsonResponse({ error: true, code: "unauthorized", message: "An access token is required" }, 401)
-      }
-      if (url === bhlNameMetadataUrl(OAK)) {
-        return jsonResponse({
-          Status: "ok",
-          Result: [
-            {
-              NameConfirmed: OAK,
-              Titles: [
-                {
-                  FullTitle: "English Botany.",
-                  Authors: [{ Name: "Sowerby, James" }],
-                  Items: [
-                    {
-                      Pages: [
-                        {
-                          PageUrl: "https://www.biodiversitylibrary.org/page/11",
-                          ThumbnailUrl: bhlImage,
-                          PageTypes: [{ PageTypeName: "Illustration" }],
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        })
-      }
-      if (url === bhlImage && init?.method === "HEAD") return imageHead(200)
-      throw new Error(`Unexpected call ${init?.method ?? "GET"} ${url}`)
-    }
-    const outcome = await lookupNameImage(OAK, fetchImpl, true)
-    assert.equal(outcome.state, "shown")
-    if (outcome.state !== "shown") return
-    assert.equal(outcome.image.source, "bhl")
-    assert.equal(outcome.image.title, "English Botany.")
-    assert.equal(outcome.image.credit, "Sowerby, James")
-    assert.equal(outcome.image.queriedName, OAK)
-  })
-
-  it("says the illustration was not retrieved when Commons, Trefle and BHL do not return an image", async () => {
+  it("says the illustration was not retrieved when Commons does not return an image", async () => {
     let calls = 0
     const offlineFetch: typeof fetch = async () => {
       calls += 1
@@ -221,17 +168,15 @@ describe("published illustration of the sheet name", () => {
     assert.equal(calls, 0)
     assert.equal((await lookupNameImage("  ", offlineFetch, true)).state, "unnamed")
 
-    const failed = await lookupNameImage(OAK, async (input) => {
-      const url = String(input)
-      if (url.startsWith("https://commons.wikimedia.org/")) return jsonResponse({ query: {} })
-      if (url.startsWith(TREFLE_PLANTS)) {
-        return jsonResponse({ error: true, code: "unauthorized", message: "An access token is required" }, 401)
-      }
-      if (url.startsWith("https://www.biodiversitylibrary.org/")) {
-        return jsonResponse({ Status: "unauthorized", ErrorMessage: "invalid API key" }, 401)
-      }
-      throw new Error(url)
-    }, true)
+    const failed = await lookupNameImage(
+      OAK,
+      async (input) => {
+        const url = String(input)
+        if (url.startsWith("https://commons.wikimedia.org/")) return jsonResponse({ query: {} })
+        throw new Error(url)
+      },
+      true,
+    )
     assert.equal(failed.state, "missed")
     if (failed.state === "missed") assert.equal(failed.detail, ILLUSTRATION_MISSED)
   })

@@ -1,4 +1,4 @@
-import { bhlImageUrl, bhlPageUrl, requestPublishedPlate } from "./bhl"
+import { bhlImageUrl, bhlPageUrl } from "./bhl"
 import { binomialKey, lookupShouldRun } from "./gbif"
 
 /** Documented Trefle search. A token is required. This sheet does not send one. */
@@ -462,53 +462,9 @@ async function requestCommons(
   }
 }
 
-async function requestTrefle(
-  name: string,
-  fetchImpl: typeof fetch,
-  parent: AbortSignal,
-): Promise<NameImage | null> {
-  try {
-    const response = await fetchImpl(trefleSearchUrl(name), { signal: parent })
-    const candidate = readTrefleCandidate(name, response.status, await readJson(response))
-    if (!candidate) return null
-    if (!(await imageFileReturned(candidate.imageUrl, fetchImpl, parent))) return null
-    return candidate
-  } catch (error) {
-    if (parentAborted(error, parent)) throw error
-    return null
-  }
-}
-
-async function requestBhl(
-  name: string,
-  fetchImpl: typeof fetch,
-  parent: AbortSignal,
-): Promise<NameImage | null> {
-  try {
-    const outcome = await requestPublishedPlate(name, fetchImpl, parent)
-    if (outcome.state !== "shown") return null
-    const imageUrl = bhlImageUrl(outcome.plate.imageUrl)
-    const pageUrl = bhlPageUrl(outcome.plate.pageUrl)
-    if (!imageUrl || !pageUrl) return null
-    if (!(await imageFileReturned(imageUrl, fetchImpl, parent))) return null
-    return storeNameImage({
-      queriedName: name,
-      imageUrl,
-      pageUrl,
-      source: "bhl",
-      sourceLabel: sourceLabel("bhl"),
-      title: outcome.plate.title,
-      credit: outcome.plate.creator,
-    })
-  } catch (error) {
-    if (parentAborted(error, parent)) throw error
-    return null
-  }
-}
-
 /**
  * Prefer a Wikimedia Commons botanical illustration of the sheet name.
- * Trefle and BHL are used only when they return an image file and Commons does not.
+ * Trefle and the Biodiversity Heritage Library need tokens. They are not called.
  * This sheet does not generate a plant.
  */
 export async function lookupNameImage(
@@ -528,10 +484,6 @@ export async function lookupNameImage(
   try {
     const commons = await requestCommons(name, fetchImpl, parent)
     if (commons) return { state: "shown", image: commons }
-    const trefle = await requestTrefle(name, fetchImpl, parent)
-    if (trefle) return { state: "shown", image: trefle }
-    const bhl = await requestBhl(name, fetchImpl, parent)
-    if (bhl) return { state: "shown", image: bhl }
     return { state: "missed", detail: ILLUSTRATION_MISSED }
   } catch {
     return { state: "missed", detail: ILLUSTRATION_MISSED }

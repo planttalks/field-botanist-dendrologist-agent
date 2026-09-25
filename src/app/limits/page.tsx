@@ -58,7 +58,7 @@ export default function LimitsPage() {
           Two panels compare the same sheet name with published lists. The World Checklist of Vascular Plants (Kew), the names backbone of Plants of the World Online, and the World Flora Online Plant List are both read from ChecklistBank. No key is sent. The panel shows a classification of family, genus and species, plus an infraspecific rank when the list returns one. It is a classification, not a phylogeny. A geographic note is shown only when that checklist includes one. A GBIF occurrence map is shown when that call succeeds. If a call fails, the sheet says so. It does not draw a range and it does not declare a new species.
         </p>
         <p className="text-sm leading-relaxed">
-          Five more lines sit under the sheet name: IPNI, Tropicos, USDA PLANTS, Tela Botanica and MNHN. IPNI, USDA PLANTS and Tela Botanica answer a public query with no key. Tropicos requires a token, so that check does not run. The MNHN taxonomic host did not return a record, so that check does not run. A line is still shown for each source. The sheet name is not replaced.
+          Five more lines sit under the sheet name: IPNI, Tropicos, USDA PLANTS, Tela Botanica and MNHN. IPNI, USDA PLANTS and Tela Botanica answer a public query with no key. Tropicos needs a token, so that check does not run. MNHN did not respond, so that check does not run. A line is still shown for each source. The sheet name is not replaced. A new species is not declared.
         </p>
         <ul className="list-disc space-y-1 pl-5 text-sm">
           <li>
@@ -104,16 +104,7 @@ export default function LimitsPage() {
             for a published illustration of the sheet name. The figure names that source when the file loads.
           </li>
           <li>
-            <a className="underline underline-offset-4" href="https://trefle.io/">
-              Trefle
-            </a>{" "}
-            only when Commons has no illustration and the response contains an image file. The search requires a token. This sheet does not send one. HTTP 401 is not an illustration.
-          </li>
-          <li>
-            <a className="underline underline-offset-4" href="https://www.biodiversitylibrary.org/">
-              Biodiversity Heritage Library
-            </a>{" "}
-            only when a request without a key returns an illustration file. HTTP 401 is not an illustration.
+            Trefle needs a token. The Biodiversity Heritage Library needs a token. Those sources are not called.
           </li>
         </ul>
       </section>
@@ -121,10 +112,10 @@ export default function LimitsPage() {
       <section className="space-y-2">
         <h2 className="section-rule font-serif text-xl">Illustration plate</h2>
         <p className="text-sm leading-relaxed">
-          The ink plate traces photographs you upload. It does not draw an organ that is missing, and it does not call an image model. Notes for pubescence, stigmas, chambers and scale are printed. They are not turned into extra drawing. The schematic plate draws only characters you marked. A missing shape, vein pattern or needle count stays missing.
+          The ink plate traces photographs you upload. It does not draw an organ that is missing, and it does not call an image model. Notes for pubescence, stigmas, chambers and scale are printed. They are not turned into extra drawing. The schematic plate draws only characters you marked. Leaf outlines follow standard shape terms. Each scored term is one black outline on white. The outlines are not a copied figure and they are not a generated image. No leaf is drawn when the shape was not scored. A missing vein pattern or needle count stays missing.
         </p>
         <p className="text-sm leading-relaxed">
-          A published illustration of the sheet name may sit beside the schematic. The preferred file is a botanical illustration from Wikimedia Commons. It is not a drawing of this specimen. Trefle and the Biodiversity Heritage Library are used only when they return an image file with no key. If Commons has no illustration, the sheet says that the illustration was not retrieved. It does not generate a plant.
+          A published illustration of the sheet name may sit beside the schematic. The file is a botanical illustration from Wikimedia Commons. It is not a drawing of this specimen. The sheet name is not replaced. A new species is not declared. Trefle needs a token. The Biodiversity Heritage Library needs a token. Those sources are not called. If Commons has no illustration, the sheet says that the illustration was not retrieved. It does not generate a plant.
         </p>
       </section>
 

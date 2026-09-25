@@ -14,6 +14,15 @@ import {
   type LeafKind,
   type PlateLeader,
 } from "@/lib/diagnostic-plate"
+import {
+  bladeOutline,
+  frondParts,
+  insetOutline,
+  needleParts,
+  outwardMarks,
+  scaleOutlines,
+  veinMarks,
+} from "@/lib/leaf-outlines"
 
 const INK = "#141414"
 const PAPER = "#ffffff"
@@ -124,54 +133,32 @@ function LeftLeaders({
     .filter((leader) => !skip.has(leader.id) && touches[leader.id])
     .map((leader) => ({ leader, touch: touches[leader.id]! }))
     .sort((a, b) => a.touch.y - b.touch.y)
+  const placed: Array<{ leader: PlateLeader; touch: { x: number; y: number }; labelY: number }> = []
   let last = 36
+  for (const row of rows) {
+    const labelY = Math.max(row.touch.y, last + 24)
+    last = labelY
+    placed.push({ ...row, labelY })
+  }
   return (
     <g>
-      {rows.map((row) => {
-        const labelY = Math.max(row.touch.y, last + 24)
-        last = labelY
-        return (
+      {placed.map((row) => (
           <Leader
             key={row.leader.id}
             x1={row.touch.x}
             y1={row.touch.y}
             x2={labelX}
-            y2={labelY}
+            y2={row.labelY}
             text={row.leader.text}
             anchor={anchor}
             size={15}
           />
-        )
-      })}
+      ))}
     </g>
   )
 }
 
-const PINNATE_MANY =
-  "M 0 2 C -8 -4 -10 -12 -12 -16 C -30 -18 -50 -22 -48 -32 C -46 -42 -20 -40 -14 -50 C -32 -54 -66 -58 -60 -70 C -54 -82 -22 -78 -16 -90 C -34 -96 -62 -102 -54 -114 C -46 -126 -18 -122 -10 -134 C -16 -148 -4 -162 2 -168 C 10 -160 18 -146 14 -134 C 24 -122 48 -128 56 -114 C 64 -100 24 -96 18 -86 C 36 -78 68 -72 62 -58 C 56 -44 22 -48 16 -36 C 28 -28 52 -24 46 -16 C 40 -8 16 -6 0 2 Z"
-
-const PINNATE_FIVE =
-  "M 0 2 C -18 -10 -36 -4 -24 -36 C -52 -48 -58 -16 -36 -64 C -58 -92 -40 -100 -16 -132 C -6 -156 8 -150 18 -128 C 42 -108 58 -96 36 -68 C 56 -40 48 -16 26 -32 C 34 -8 14 -12 0 2 Z"
-
-const PINNATE_THREE =
-  "M 0 2 C -16 -16 -48 -20 -28 -70 C -46 -108 -16 -140 0 -162 C 16 -140 46 -108 28 -70 C 48 -20 16 -16 0 2 Z"
-
-const PALMATE_FIVE =
-  "M 0 8 C -8 -20 -36 -28 -24 -78 C -40 -120 -8 -132 0 -158 C 8 -132 40 -120 24 -78 C 36 -28 8 -20 0 8 C 18 4 54 -8 70 16 C 48 28 16 18 0 24 C -16 18 -48 28 -70 16 C -54 -8 -18 4 0 8 Z"
-
-const PALMATE_THREE =
-  "M 0 6 C -12 -16 -34 -24 -18 -86 C -8 -130 8 -130 18 -86 C 34 -24 12 -16 0 6 C 16 16 48 28 36 52 C 12 40 -12 40 -36 52 C -48 28 -16 16 0 6 Z"
-
-const SIMPLE: Record<string, string> = {
-  ovate: "M 0 2 C -34 -16 -46 -78 -16 -140 C -6 -158 8 -158 18 -140 C 48 -78 36 -16 0 2 Z",
-  elliptic: "M 0 2 C -32 -28 -36 -100 0 -158 C 36 -100 32 -28 0 2 Z",
-  obovate: "M 0 2 C -20 -8 -18 -48 -28 -78 C -40 -120 -16 -150 0 -158 C 16 -150 40 -120 28 -78 C 18 -48 20 -8 0 2 Z",
-  lanceolate: "M 0 2 C -16 -20 -18 -80 -8 -140 C -4 -158 4 -158 8 -140 C 18 -80 16 -20 0 2 Z",
-  linear: "M 0 2 C -7 -8 -8 -80 0 -162 C 8 -80 7 -8 0 2 Z",
-  cordate: "M 0 -18 C -28 -62 -62 -28 -36 8 C -18 36 0 52 0 52 C 0 52 18 36 36 8 C 62 -28 28 -62 0 -18 Z",
-  fan: "M 0 28 C -18 28 -70 -8 -78 -46 C -36 -78 -12 -40 0 -58 C 12 -40 36 -78 78 -46 C 70 -8 18 28 0 28 Z",
-  pad: "M 0 -8 C 28 -8 34 24 22 62 C 12 86 0 92 0 92 C 0 92 -12 86 -22 62 C -34 24 -28 -8 0 -8 Z",
-}
+const UNSCORED_BLADE = "M -34 -8 H 34 V -148 H -34 Z"
 
 function lobePairs(lobes: string | null): 1 | 2 | 4 {
   if (lobes === "three") return 1
@@ -182,175 +169,63 @@ function lobePairs(lobes: string | null): 1 | 2 | 4 {
 function lobedMode(model: DiagnosticPlateModel): "pinnate" | "palmate" | null {
   if (model.shape === "lobed-pinnate") return "pinnate"
   if (model.shape === "lobed-palmate") return "palmate"
-  if (model.lobes === "three" || model.lobes === "five" || model.lobes === "many") {
-    if (model.venation === "palmate") return "palmate"
-    if (model.shape && model.shape !== "pad") return "pinnate"
-  }
   return null
 }
 
 function bladePath(model: DiagnosticPlateModel): string {
-  const mode = lobedMode(model)
-  if (mode === "pinnate") {
-    const pairs = lobePairs(model.lobes)
-    if (pairs === 4) return PINNATE_MANY
-    if (pairs === 1) return PINNATE_THREE
-    return PINNATE_FIVE
-  }
-  if (mode === "palmate") {
-    if (model.lobes === "three") return PALMATE_THREE
-    return PALMATE_FIVE
-  }
-  if (model.shape && SIMPLE[model.shape]) return SIMPLE[model.shape]
-  return "M -34 -8 H 34 V -148 H -34 Z"
+  return bladeOutline(model.shape, model.lobes)?.d ?? UNSCORED_BLADE
 }
 
-function marginPoints(model: DiagnosticPlateModel): Array<[number, number]> {
-  const mode = lobedMode(model)
-  if (mode === "pinnate" && lobePairs(model.lobes) === 4) {
-    return [
-      [-48, -32],
-      [-60, -70],
-      [-54, -114],
-      [-10, -134],
-      [2, -168],
-      [14, -134],
-      [56, -114],
-      [62, -58],
-      [46, -16],
+function chartPoints(model: DiagnosticPlateModel) {
+  return (
+    bladeOutline(model.shape, model.lobes)?.points ?? [
+      { x: -34, y: -8 },
+      { x: 34, y: -8 },
+      { x: 34, y: -148 },
+      { x: -34, y: -148 },
     ]
-  }
-  if (mode === "pinnate") {
-    return [
-      [26, -32],
-      [36, -68],
-      [18, -128],
-      [-16, -132],
-      [-36, -64],
-      [-24, -36],
-    ]
-  }
-  if (mode === "palmate") {
-    return [
-      [0, -158],
-      [24, -78],
-      [70, 16],
-      [0, 24],
-      [-70, 16],
-      [-24, -78],
-    ]
-  }
-  return [
-    [20, -40],
-    [28, -90],
-    [8, -140],
-    [-20, -100],
-    [-24, -40],
-  ]
+  )
 }
 
 function VeinWork({ model, clipId }: { model: DiagnosticPlateModel; clipId: string }) {
   if (!model.showVeins || !model.venation) return null
-  const lobed = lobedMode(model) === "pinnate" && model.venation === "pinnate"
+  const marks = veinMarks(model.venation, chartPoints(model), model.shape)
   return (
-    <g clipPath={`url(#${clipId})`} {...ink(VEIN)}>
-      {lobed ? (
-        <g>
-          <path d="M 1 0 C 0 -40 2 -96 8 -154" {...ink(STRUCT)} />
-          <path d="M 0 -26 C 12 -30 28 -28 40 -36" />
-          <path d="M 0 -26 C -12 -30 -28 -26 -40 -34" />
-          <path d="M 0 -58 C 16 -64 32 -60 46 -70" />
-          <path d="M 0 -58 C -14 -66 -32 -60 -46 -72" />
-          <path d="M 0 -92 C 12 -100 26 -102 36 -112" />
-          <path d="M 0 -92 C -12 -100 -24 -104 -34 -116" />
-          <path d="M 0 -122 C 8 -130 12 -136 14 -146" />
-          <path d="M 0 -122 C -6 -132 -8 -140 -8 -150" />
-        </g>
-      ) : null}
-      {!lobed && model.venation === "pinnate" ? (
-        <g>
-          <path d="M 0 -4 C 0 -40 0 -100 0 -148" {...ink(STRUCT)} />
-          <path d="M 0 -28 C -16 -36 -24 -32 -30 -26" />
-          <path d="M 0 -28 C 16 -36 24 -32 30 -26" />
-          <path d="M 0 -62 C -14 -74 -20 -70 -24 -60" />
-          <path d="M 0 -62 C 14 -74 20 -70 24 -60" />
-          <path d="M 0 -98 C -10 -110 -14 -106 -16 -96" />
-          <path d="M 0 -98 C 10 -110 14 -106 16 -96" />
-        </g>
-      ) : null}
-      {!lobed && model.venation === "palmate" ? (
-        <g {...ink(STRUCT)}>
-          <path d="M 0 0 L 0 -140" {...ink(VEIN)} />
-          <path d="M 0 -8 L -36 -78" />
-          <path d="M 0 -8 L 36 -78" />
-          <path d="M 0 4 L -62 10" />
-          <path d="M 0 4 L 62 10" />
-        </g>
-      ) : null}
-      {model.venation === "parallel" ? (
-        <g>
-          <path d="M -12 -20 L -8 -140" />
-          <path d="M 0 -8 L 0 -150" />
-          <path d="M 12 -20 L 8 -140" />
-        </g>
-      ) : null}
-      {model.venation === "dichotomous" ? (
-        <g>
-          <path d="M 0 0 L 0 -40" />
-          <path d="M 0 -40 L -22 -90" />
-          <path d="M 0 -40 L 22 -90" />
-          <path d="M -22 -90 L -36 -130" />
-          <path d="M -22 -90 L -8 -128" />
-          <path d="M 22 -90 L 8 -128" />
-          <path d="M 22 -90 L 36 -130" />
-        </g>
-      ) : null}
+    <g clipPath={`url(#${clipId})`}>
+      {marks.midrib ? <path d={marks.midrib} {...ink(STRUCT)} /> : null}
+      <g {...ink(VEIN)}>
+        {marks.lines.map((path, index) => (
+          <path key={index} d={path} />
+        ))}
+      </g>
     </g>
   )
 }
 
 function MarginWork({ model }: { model: DiagnosticPlateModel }) {
-  const points = marginPoints(model)
   if (model.marginTexture === "none") return null
+  const points = chartPoints(model)
   if (model.marginTexture === "rolled-under") {
-    return (
-      <g transform="translate(0 -78) scale(0.9) translate(0 86)">
-        <path d={bladePath(model)} {...ink(0.7)} />
-      </g>
-    )
+    return <path d={insetOutline(points, 0.86)} {...ink(0.7)} />
   }
-  const length = model.marginTexture === "spiny" ? 9 : model.marginTexture === "wavy" ? 4 : 5
+  const marks = outwardMarks(points, model.marginTexture)
   return (
     <g {...ink(model.marginTexture === "spiny" ? 1.05 : FINE)}>
-      {points.map(([x, y], index) => {
-        const span = Math.hypot(x, y) || 1
-        const ox = (x / span) * length
-        const oy = (y / span) * length
-        if (model.marginTexture === "wavy") {
-          return <path key={index} d={`M ${x - oy} ${y + ox} Q ${x + ox} ${y + oy} ${x + oy} ${y - ox}`} />
-        }
-        return <line key={index} x1={x} y1={y} x2={x + ox} y2={y + oy} />
-      })}
+      {marks.map((path, index) => (
+        <path key={index} d={path} />
+      ))}
     </g>
   )
 }
 
 function HairWork({ model }: { model: DiagnosticPlateModel }) {
   if (!model.showHairs) return null
-  const points = marginPoints(model).filter((_, index) => index % 2 === 0)
+  const marks = outwardMarks(chartPoints(model), "spiny").filter((_, index) => index % 2 === 0)
   return (
     <g {...ink(FINE)}>
-      {points.map(([x, y], index) => {
-        const span = Math.hypot(x, y) || 1
-        const ox = (x / span) * 8
-        const oy = (y / span) * 8
-        return (
-          <g key={index}>
-            <line x1={x} y1={y} x2={x + ox} y2={y + oy} />
-            <line x1={x + 1.5} y1={y + 1} x2={x + ox * 0.8} y2={y + oy * 0.7} />
-          </g>
-        )
-      })}
+      {marks.map((path, index) => (
+        <path key={index} d={path} />
+      ))}
     </g>
   )
 }
@@ -416,7 +291,7 @@ function bladeIsDashed(model: DiagnosticPlateModel): boolean {
 
 function BroadBlade({ model, clipId }: { model: DiagnosticPlateModel; clipId: string }) {
   const dashed = bladeIsDashed(model)
-  const d = dashed ? "M -34 -8 H 34 V -148 H -34 Z" : bladePath(model)
+  const d = dashed ? UNSCORED_BLADE : bladePath(model)
   return (
     <g>
       <defs>
@@ -435,64 +310,43 @@ function BroadBlade({ model, clipId }: { model: DiagnosticPlateModel; clipId: st
 }
 
 function Needles({ model }: { model: DiagnosticPlateModel }) {
-  const known = model.bundleKnown
-  if (!known) {
-    return (
-      <g {...ink(1.6, true)}>
-        <path d="M 0 8 L -10 -120" />
-        <path d="M 0 8 L 10 -120" />
-      </g>
-    )
-  }
-  if (model.fascicle === "flat-spray") {
-    return (
-      <g {...ink(1.35)}>
-        {[-40, -20, 0, 20, 40].map((y) => (
-          <path key={y} d={`M 0 ${y} L ${y < 0 ? -70 : 70} ${y - 8}`} />
-        ))}
-      </g>
-    )
-  }
-  const count = model.fascicle === "three" ? 3 : 2
+  const mode = !model.bundleKnown ? "one" : model.fascicle === "three" ? "three" : model.fascicle === "flat-spray" ? "spray" : "two"
+  const parts = needleParts(mode)
   return (
     <g>
-      <path d="M -4 12 H 4 V 2 H -4 Z" fill={PAPER} stroke={INK} strokeWidth={1.3} />
-      <g {...ink(1.7)}>
-        {Array.from({ length: count }, (_, index) => {
-          const spread = (index - (count - 1) / 2) * 16
-          return <path key={index} d={`M 0 4 L ${spread} -130`} />
-        })}
-      </g>
+      {parts.sheath ? <path d={parts.sheath} fill={PAPER} stroke={INK} strokeWidth={1.3} /> : null}
+      {parts.blades.map((blade, index) => (
+        <g key={index} transform={`rotate(${blade.rotate} 0 ${blade.pivotY})`}>
+          <path d={blade.d} fill={PAPER} stroke={INK} strokeWidth={1.7} strokeLinejoin="round" />
+        </g>
+      ))}
     </g>
   )
 }
 
 function Scales() {
+  const [stem, ...scales] = scaleOutlines()
   return (
-    <g fill={PAPER} stroke={INK} strokeWidth={1.5}>
-      <path d="M 0 24 L 0 -130" fill="none" strokeWidth={2.2} />
-      {[-100, -70, -40, -10, 20].map((y) => (
-        <path key={y} d={`M 0 ${y} L 16 ${y - 14} L 0 ${y - 6} L -16 ${y - 14} Z`} />
+    <g fill={PAPER} stroke={INK} strokeWidth={1.45} strokeLinejoin="round">
+      <path d={stem} fill="none" strokeWidth={2.1} />
+      {scales.map((path, index) => (
+        <path key={index} d={path} />
       ))}
     </g>
   )
 }
 
 function Frond({ model }: { model: DiagnosticPlateModel }) {
+  const parts = frondParts()
   return (
     <g>
-      <path d="M 0 20 C 2 -20 0 -80 0 -140" {...ink(2.2)} />
-      {[-20, -55, -90, -120].map((y) => (
-        <path
-          key={y}
-          d={`M 0 ${y} C 18 ${y - 8} 42 ${y - 6} 48 ${y - 18} C 30 ${y - 8} 12 ${y - 4} 0 ${y + 6} C -12 ${y - 4} -30 ${y - 8} -48 ${y - 18} C -42 ${y - 6} -18 ${y - 8} 0 ${y} Z`}
-          fill={PAPER}
-          stroke={INK}
-          strokeWidth={1.7}
-          strokeLinejoin="round"
-        />
+      <path d={parts.rachis} {...ink(2.2)} />
+      {parts.pinnae.map((pinna, index) => (
+        <g key={index} transform={`translate(0 ${pinna.y}) rotate(${pinna.side * 68})`}>
+          <path d={pinna.d} fill={PAPER} stroke={INK} strokeWidth={1.6} strokeLinejoin="round" />
+          {model.showVeins ? <path d="M 0 0 L 0 -26" {...ink(VEIN)} /> : null}
+        </g>
       ))}
-      {model.showVeins ? <path d="M 0 16 L 0 -132" {...ink(VEIN)} /> : null}
     </g>
   )
 }

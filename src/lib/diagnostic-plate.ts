@@ -370,6 +370,9 @@ export function diagnosticPlateModel(observation: Observation): DiagnosticPlateM
   if (main === "leaf") {
     if (placeholder || (needsBlade && !shape)) pushLeader(leaders, "shape", "Shape not scored.")
     else if (shape) pushLeader(leaders, "shape", shapeTerm(shape))
+    else if (leafKind === "needle") pushLeader(leaders, "shape", "needles")
+    else if (leafKind === "scale") pushLeader(leaders, "shape", "scale-like leaves")
+    else if (leafKind === "frond") pushLeader(leaders, "shape", "fern frond")
     if (!placeholder && lobes && lobes !== "none") pushLeader(leaders, "lobes", phraseFor("lobes", lobes))
     if (!placeholder && lobes === "none") pushLeader(leaders, "lobes", "unlobed blade")
     if (!placeholder && margin) pushLeader(leaders, "margin", marginTerm(margin))

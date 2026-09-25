@@ -15,7 +15,7 @@ Confirm any name intended for publication in [POWO](https://powo.science.kew.org
 - The region may come from the phone, or it may be selected by hand. If place is omitted, no geographic flag is set. A missing GPS point stays missing. Uncertainty in meters is not invented.
 - A photograph may be attached. A warning is shown if the frame is soft, dark or overexposed. The frame may still be kept.
 - Only observed characters are scored. Unknown is not scored as a clash. Score the margin of the lobe, not the sinus.
-- The diagnostic schematic is an ink plate of the characters that were scored. It is not a drawing of the specimen. It is not a copy of a published plate. A published illustration of the sheet name may sit beside it. The two figures stay separate.
+- The diagnostic schematic is an ink plate of the characters that were scored. Leaf outlines follow standard shape terms. Each scored term is one black outline on white. It is not a drawing of the specimen. It is not a copy of a published plate. It is not a generated image. A published illustration of the sheet name may sit beside it. The two figures stay separate.
 - The pen-and-ink plate is traced from the uploaded views (habit, leaf, flower or fruit, close detail). An empty view stays empty and keeps its label. Measurements and notes are printed as text. They are not drawn.
 - The record stores a ranked name. It stores the traits that fit and the traits that do not fit. A review line is added when a specialist should examine the plant.
 - Poison warnings are given for yew, oleander, castor, bracken, lantana fruit, ginkgo seed and mango sap. The sheet does not state that a plant is edible.
@@ -29,7 +29,7 @@ Records remain in this browser. There is no account. There is no server database
 - It does not invent an organ that was not photographed.
 - It does not invent a vein that was not scored.
 - It does not request a cut or a crushed sample from a healthy plant.
-- It does not call an image detector or a training set. There is no Pl@ntNet call. There is no iNaturalist vision call. It does not generate a plant. When a network is available it reads two published name lists, a GBIF occurrence map and the name sources that answer without a key. It may also show a published illustration of the sheet name. See the sections below.
+- It does not call an image detector or a training set. There is no Pl@ntNet call. There is no iNaturalist vision call. It does not generate a plant. When a network is available it reads the Kew checklist and the World Flora Online Plant List from ChecklistBank, a GBIF name check and occurrence map, and the name sources that answer without a key: IPNI, USDA PLANTS and Tela Botanica. It may also show a Wikimedia Commons illustration of the sheet name. Tropicos needs a token and the Muséum national d'Histoire naturelle did not respond, so those checks do not run. Trefle and the Biodiversity Heritage Library need tokens and are not called. The sheet name is not replaced.
 - It does not attach author citations. An incorrect author is omitted.
 
 ## Local use
@@ -70,21 +70,17 @@ Under the sheet name, five more sources are listed. Each line is labeled with th
 These calls were made for *Quercus robur* with no API key.
 
 - IPNI answers. `GET https://www.ipni.org/api/1/search` with the genus, the species epithet and rank `spec.` returns HTTP 200. No key is sent. When several species citations share the binomial, the line keeps the one record that IPNI links to Plants of the World Online. It does not merge the others into a new name.
-- Tropicos does not answer a public name search. `GET https://services.tropicos.org/Name/Search` returns HTTP 200 and the message that the request is not allowed. A key is required. The line says the check did not run. Token required.
+- Tropicos needs a token, so that check does not run. `GET https://services.tropicos.org/Name/Search` returns HTTP 200 and the message that the request is not allowed. No name is taken from that response.
 - USDA PLANTS answers. `GET https://plantsservices.sc.egov.usda.gov/api/PlantSearch` returns HTTP 200. No key is sent. The line shows the matching scientific name for the species rank.
 - Tela Botanica answers. `GET https://api.tela-botanica.org/service:eflore:0.1/bdtfx/noms` returns HTTP 200. No key is sent. The line shows the retained name and its citation.
-- Muséum national d'Histoire naturelle does not answer here. `GET https://taxref.mnhn.fr/api/taxa/search` returns HTTP 403. The line says the check did not run. No response.
+- The Muséum national d'Histoire naturelle did not respond, so that check does not run. `GET https://taxref.mnhn.fr/api/taxa/search` returns HTTP 403.
 
 ## Published illustration
 
-The schematic stays. It draws only the characters that were marked. When the sheet has a name, a second figure may show a published illustration of that name. The figure sits beside the schematic on the result and on a saved record. It is not a drawing of this specimen. The sheet name is not replaced. A new species is not declared.
+The schematic stays. It draws only the characters that were marked. Leaf outlines follow standard shape terms. When the sheet has a name, a second figure may show a published illustration of that name from Wikimedia Commons. The figure sits beside the schematic on the result and on a saved record. It is not a drawing of this specimen. The sheet name is not replaced. A new species is not declared.
 
 The preferred source is Wikimedia Commons, in the manner of the category [Botanical illustrations](https://commons.wikimedia.org/wiki/Category:Botanical_illustrations). The sheet searches `Category:{name} - botanical illustrations`. It keeps a file whose title contains the sheet name. The figure shows that image, the file title, the artist when the file records one and a link to the Commons page. The label says it is a published illustration of this name, not a drawing of this specimen. The source line says Wikimedia Commons.
 
-Trefle is used only when that search returns no illustration and the Trefle response contains an image file. The documented search is `GET https://trefle.io/api/v1/plants`. It requires an access token. This sheet does not hold a token. A request without a token returns HTTP 401. That response is not an illustration.
-
-The Biodiversity Heritage Library API is `https://www.biodiversitylibrary.org/api3`, operation `GetNameMetadata`. A request without a key returns HTTP 401. That response is not an illustration. The sheet does not send a key. A BHL page is shown only when a keyless response contains an illustration file.
-
-If Commons has no illustration, and Trefle and BHL do not return an image file, the sheet says that the illustration was not retrieved. The same sentence is used when the phone is offline. The sheet does not generate a plant and it does not draw a hypothetical one.
+Trefle needs a token. The Biodiversity Heritage Library needs a token. Those sources are not called. If Commons has no illustration, the sheet says that the illustration was not retrieved. The same sentence is used when the phone is offline. The sheet does not generate a plant and it does not draw a hypothetical one.
 
 A returned image address can be stored with the record. It is a published file for the sheet name. It is not a photograph of this plant. The reader is in `src/lib/name-image.ts`.

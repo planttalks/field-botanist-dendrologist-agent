@@ -1,6 +1,7 @@
 import assert from "node:assert/strict"
 import { describe, it } from "node:test"
 import { diagnosticPlateModel } from "./diagnostic-plate"
+import { CHART_SHAPES, bladeOutline, needleParts, scaleOutlines } from "./leaf-outlines"
 import { SAMPLES } from "./samples"
 import { blankObservation, type Observation } from "./types"
 
@@ -127,5 +128,27 @@ describe("diagnostic plate", () => {
     })
     assert.equal(measured.scaleNote, "Scale: lamina 8 by 4 cm.")
     assert.match(measured.caption, /lamina 8 by 4 cm/)
+  })
+
+  it("draws a distinct chart outline for each scored blade shape and none when shape is missing", () => {
+    const paths = CHART_SHAPES.map((shape) => {
+      const outline = bladeOutline(shape, shape.startsWith("lobed") ? "five" : null)
+      assert.ok(outline)
+      assert.match(outline.d, /^M /)
+      return outline.d
+    })
+    assert.equal(new Set(paths).size, CHART_SHAPES.length)
+    assert.equal(bladeOutline(null, null), null)
+    assert.equal(bladeOutline("not-seen", null), null)
+    assert.notEqual(bladeOutline("lobed-pinnate", "three")?.d, bladeOutline("lobed-pinnate", "many")?.d)
+    assert.notEqual(bladeOutline("lobed-palmate", "three")?.d, bladeOutline("lobed-palmate", "five")?.d)
+    assert.equal(needleParts("one").blades.length, 1)
+    assert.equal(needleParts("two").blades.length, 2)
+    assert.equal(needleParts("three").blades.length, 3)
+    assert.ok(scaleOutlines().length > 1)
+    const needle = diagnosticPlateModel({ ...blankObservation(), leafType: "needle" })
+    assert.equal(needle.leaders.find((leader) => leader.id === "shape")?.text, "needles")
+    const scale = diagnosticPlateModel({ ...blankObservation(), leafType: "scale-like" })
+    assert.equal(scale.leaders.find((leader) => leader.id === "shape")?.text, "scale-like leaves")
   })
 })
