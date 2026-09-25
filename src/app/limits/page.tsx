@@ -45,14 +45,17 @@ export default function LimitsPage() {
           After the worksheet copy is stored on this phone, these parts work with no signal: the character key, the schematic plate, the ink plate from photos already on the phone, the journal, camera or file upload and a region you pick by hand. Records stay in this browser. The copy is not a record. If it fails, the footer says no record was written.
         </p>
         <p className="text-sm leading-relaxed">
-          These parts do not work offline. The GBIF name check does not run, and the sheet name stays. A first visit with an empty copy cannot open pages that were never stored. Add to Home Screen uses that same copy.
+          These parts do not work offline. The GBIF name check does not run, and the sheet name stays. The checklist comparison and the distribution map also do not run. The sheet then says that the check did not run, or that the distribution was not retrieved. A first visit with an empty copy cannot open pages that were never stored. Add to Home Screen uses that same copy.
         </p>
       </section>
 
       <section className="space-y-2">
         <h2 className="section-rule font-serif text-xl">Sources</h2>
         <p className="text-sm leading-relaxed">
-          The names on the sheet are a local list, written to match binomials used by POWO and WFO. They will lag those sites. When a network exists, the top sheet name is also checked on GBIF&apos;s public species API. No API key. The GBIF accepted name, rank and status sit beside the sheet name. The sheet name is not replaced. A hybrid or an aggregate is not rewritten into a species it is not. If the phone is offline or GBIF fails, the check says it did not run.
+          The names on the sheet are a local list, written to match binomials used by POWO and WFO. They will lag those sites. When a network exists, the top sheet name is checked on GBIF&apos;s public species API. No API key. The GBIF accepted name, rank and status sit beside the sheet name. The sheet name is not replaced. A hybrid or an aggregate is not rewritten into a species it is not. If the phone is offline or GBIF fails, the check says it did not run.
+        </p>
+        <p className="text-sm leading-relaxed">
+          Two panels compare the same sheet name with published lists. The World Checklist of Vascular Plants (Kew), the names backbone of Plants of the World Online, and the World Flora Online Plant List are both read from ChecklistBank. No key is sent. The panel shows a classification of family, genus and species, plus an infraspecific rank when the list returns one. It is a classification, not a phylogeny. A geographic note is shown only when that checklist includes one. A GBIF occurrence map is shown when that call succeeds. If a call fails, the sheet says so. It does not draw a range and it does not declare a new species.
         </p>
         <ul className="list-disc space-y-1 pl-5 text-sm">
           <li>
@@ -77,7 +80,19 @@ export default function LimitsPage() {
             <a className="underline underline-offset-4" href="https://www.gbif.org/">
               GBIF
             </a>{" "}
-            for the name check beside the sheet name.
+            for the name check beside the sheet name, and for occurrence maps.
+          </li>
+          <li>
+            <a className="underline underline-offset-4" href="https://www.checklistbank.org/dataset/2000">
+              ChecklistBank dataset 2000
+            </a>{" "}
+            for the Kew checklist.
+          </li>
+          <li>
+            <a className="underline underline-offset-4" href="https://www.checklistbank.org/dataset/2004">
+              ChecklistBank dataset 2004
+            </a>{" "}
+            for the World Flora Online Plant List.
           </li>
         </ul>
       </section>

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { DiagnosticPlate } from "@/components/diagnostic-plate"
 import { GbifLine } from "@/components/gbif-line"
+import { PlacementPanels } from "@/components/placement-panels"
 import { ScientificName } from "@/components/scientific-name"
 import {
   CHARACTER_FIELDS,
@@ -104,6 +105,14 @@ export function RecordView({ id }: { id: string }) {
         </div>
         <Badge variant="outline">{record.reviewLabel}</Badge>
       </div>
+
+      {record.scientificName ? (
+        <PlacementPanels
+          key={`${record.id}:${record.scientificName}`}
+          name={record.scientificName}
+          nameKind={record.taxonId ? taxonById(record.taxonId)?.nameKind : undefined}
+        />
+      ) : null}
 
       <p className="max-w-2xl text-sm leading-relaxed">{record.reviewText}</p>
       <p className="text-sm">

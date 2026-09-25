@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { DiagnosticPlate } from "@/components/diagnostic-plate"
 import { GbifLine } from "@/components/gbif-line"
+import { PlacementPanels } from "@/components/placement-panels"
 import { PlateFigure } from "@/components/plate-step"
 import { ScientificName } from "@/components/scientific-name"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -124,10 +125,18 @@ export function ResultPanel({
               </ul>
               {chosen.taxon.woodyNote ? <p className="text-sm">{chosen.taxon.woodyNote}</p> : null}
               <p className="text-sm text-muted-foreground">
-                Check this spelling against POWO or WFO before you publish it. This sheet does not track name changes.
+                The panels below compare this sheet name with the checklists. They do not replace it. This sheet does not track later name changes.
               </p>
             </CardContent>
           </Card>
+        ) : null}
+
+        {chosen && !identification.noMatch ? (
+          <PlacementPanels
+            key={`${chosen.taxon.id}:${chosen.taxon.nameKind ?? "species"}`}
+            name={chosen.taxon.scientificName}
+            nameKind={chosen.taxon.nameKind}
+          />
         ) : null}
 
         <div className="space-y-2">
