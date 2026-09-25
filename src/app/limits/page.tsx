@@ -45,7 +45,7 @@ export default function LimitsPage() {
           After the worksheet copy is stored on this phone, these parts work with no signal: the character key, the schematic plate, the ink plate from photos already on the phone, the journal, camera or file upload and a region you pick by hand. Records stay in this browser. The copy is not a record. If it fails, the footer says no record was written.
         </p>
         <p className="text-sm leading-relaxed">
-          These parts do not work offline. The GBIF name check does not run, and the sheet name stays. The checklist comparison and the distribution map also do not run. The sheet then says that the check did not run, or that the distribution was not retrieved. The published illustration is not part of the offline copy. If the phone is offline, the sheet says that the illustration was not retrieved. A first visit with an empty copy cannot open pages that were never stored. Add to Home Screen uses that same copy.
+          These parts do not work offline. The GBIF name check does not run, and the sheet name stays. The checklist comparison, the distribution map and the other name lines also do not run. The sheet then says that the check did not run, or that the distribution was not retrieved. The published illustration is not part of the offline copy. If the phone is offline, the sheet says that the illustration was not retrieved. A first visit with an empty copy cannot open pages that were never stored. Add to Home Screen uses that same copy.
         </p>
       </section>
 
@@ -56,6 +56,9 @@ export default function LimitsPage() {
         </p>
         <p className="text-sm leading-relaxed">
           Two panels compare the same sheet name with published lists. The World Checklist of Vascular Plants (Kew), the names backbone of Plants of the World Online, and the World Flora Online Plant List are both read from ChecklistBank. No key is sent. The panel shows a classification of family, genus and species, plus an infraspecific rank when the list returns one. It is a classification, not a phylogeny. A geographic note is shown only when that checklist includes one. A GBIF occurrence map is shown when that call succeeds. If a call fails, the sheet says so. It does not draw a range and it does not declare a new species.
+        </p>
+        <p className="text-sm leading-relaxed">
+          Five more lines sit under the sheet name: IPNI, Tropicos, USDA PLANTS, Tela Botanica and MNHN. IPNI, USDA PLANTS and Tela Botanica answer a public query with no key. Tropicos requires a token, so that check does not run. The MNHN taxonomic host did not return a record, so that check does not run. A line is still shown for each source. The sheet name is not replaced.
         </p>
         <ul className="list-disc space-y-1 pl-5 text-sm">
           <li>

@@ -8,7 +8,7 @@ The result is a field hypothesis. It is not a determination. The sheet will not 
 
 Use the sheet while at the plant. Use it before a name is prepared for publication. The list is short. It is not a flora. Woody plants of Papua New Guinea and Taiwan are examples. They are not the whole flora.
 
-Confirm any name intended for publication in [POWO](https://powo.science.kew.org/) or [World Flora Online](https://www.worldfloraonline.org/). The sheet lags those sources. When a network is available, the top name is also checked on the [GBIF](https://www.gbif.org/) species API. The same name is compared with the Kew checklist and the World Flora Online Plant List. The sheet name is not replaced. A hybrid is not rewritten as a species. An aggregate is not rewritten as a species.
+Confirm any name intended for publication in [POWO](https://powo.science.kew.org/) or [World Flora Online](https://www.worldfloraonline.org/). The sheet lags those sources. When a network is available, the top name is also checked on the [GBIF](https://www.gbif.org/) species API. The same name is compared with the Kew checklist and the World Flora Online Plant List. A short list under the name asks IPNI, Tropicos, USDA PLANTS, Tela Botanica and the Muséum national d'Histoire naturelle. The sheet name is not replaced. A hybrid is not rewritten as a species. An aggregate is not rewritten as a species.
 
 ## Record contents
 
@@ -29,7 +29,7 @@ Records remain in this browser. There is no account. There is no server database
 - It does not invent an organ that was not photographed.
 - It does not invent a vein that was not scored.
 - It does not request a cut or a crushed sample from a healthy plant.
-- It does not call an image detector or a training set. There is no Pl@ntNet call. There is no iNaturalist vision call. It does not generate a plant. When a network is available it reads two published name lists and a GBIF occurrence map. It may also show a published illustration of the sheet name. See the sections below.
+- It does not call an image detector or a training set. There is no Pl@ntNet call. There is no iNaturalist vision call. It does not generate a plant. When a network is available it reads two published name lists, a GBIF occurrence map and the name sources that answer without a key. It may also show a published illustration of the sheet name. See the sections below.
 - It does not attach author citations. An incorrect author is omitted.
 
 ## Local use
@@ -49,7 +49,7 @@ npm run build
 
 `npm start` serves a production build on the same port.
 
-After the worksheet copy is stored on the phone, the character key, the schematic, the ink plate and the journal open without a network. The GBIF check, the backbone comparison, the distribution map and the published illustration do not. If the phone is offline, the sheet says that the illustration was not retrieved. A failed copy is not a saved record.
+After the worksheet copy is stored on the phone, the character key, the schematic, the ink plate and the journal open without a network. The GBIF check, the backbone comparison, the distribution map, the other name lines and the published illustration do not. If the phone is offline, the sheet says that the illustration was not retrieved. A failed copy is not a saved record.
 
 ## Backbone check and map
 
@@ -61,7 +61,19 @@ The classification shows family, genus and species. An infraspecific rank is add
 
 A geographic note is printed only when the World Checklist record includes one. The map is a GBIF occurrence image, with country counts from the same service. If a call fails, or the phone is offline, the sheet says that the check did not run or that the distribution was not retrieved. The sheet does not draw a range of its own.
 
-The taxon list is in `src/lib/taxa.ts`. The GBIF name line is in `src/lib/gbif.ts`. The backbone comparison is in `src/lib/backbone.ts`. The distribution call is in `src/lib/distribution.ts`.
+The taxon list is in `src/lib/taxa.ts`. The GBIF name line is in `src/lib/gbif.ts`. The backbone comparison is in `src/lib/backbone.ts`. The distribution call is in `src/lib/distribution.ts`. The other name lines are in `src/lib/name-sources.ts`.
+
+## Other name lines
+
+Under the sheet name, five more sources are listed. Each line is labeled with the source. A returned accepted name or citation is printed. The sheet name is not replaced. A new species is not declared. If a source needs a token, or the host does not answer, that line says the check did not run. The source stays on the screen.
+
+These calls were made for *Quercus robur* with no API key.
+
+- IPNI answers. `GET https://www.ipni.org/api/1/search` with the genus, the species epithet and rank `spec.` returns HTTP 200. No key is sent. When several species citations share the binomial, the line keeps the one record that IPNI links to Plants of the World Online. It does not merge the others into a new name.
+- Tropicos does not answer a public name search. `GET https://services.tropicos.org/Name/Search` returns HTTP 200 and the message that the request is not allowed. A key is required. The line says the check did not run. Token required.
+- USDA PLANTS answers. `GET https://plantsservices.sc.egov.usda.gov/api/PlantSearch` returns HTTP 200. No key is sent. The line shows the matching scientific name for the species rank.
+- Tela Botanica answers. `GET https://api.tela-botanica.org/service:eflore:0.1/bdtfx/noms` returns HTTP 200. No key is sent. The line shows the retained name and its citation.
+- Muséum national d'Histoire naturelle does not answer here. `GET https://taxref.mnhn.fr/api/taxa/search` returns HTTP 403. The line says the check did not run. No response.
 
 ## Published illustration
 

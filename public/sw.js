@@ -4,6 +4,7 @@ const OFFLINE_MISS = "/offline.html"
 function skipRequest(request, url) {
   if (request.method !== "GET") return true
   if (url.origin !== self.location.origin) return true
+  if (url.pathname.startsWith("/api/")) return true
   if (url.pathname.startsWith("/_next/webpack-hmr")) return true
   if (url.pathname.startsWith("/_next/turbopack")) return true
   if (url.pathname.startsWith("/__nextjs")) return true

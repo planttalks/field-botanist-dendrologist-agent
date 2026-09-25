@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { DiagnosticPlate } from "@/components/diagnostic-plate"
 import { PublishedPlate } from "@/components/published-plate"
 import { GbifLine } from "@/components/gbif-line"
+import { SourceLines } from "@/components/source-lines"
 import { PlacementPanels } from "@/components/placement-panels"
 import { ScientificName } from "@/components/scientific-name"
 import {
@@ -92,6 +93,11 @@ export function RecordView({ id }: { id: string }) {
           {record.scientificName ? (
             <div className="mt-2">
               <GbifLine
+                name={record.scientificName}
+                nameKind={record.taxonId ? taxonById(record.taxonId)?.nameKind : undefined}
+              />
+              <SourceLines
+                key={`${record.id}:${record.scientificName}`}
                 name={record.scientificName}
                 nameKind={record.taxonId ? taxonById(record.taxonId)?.nameKind : undefined}
               />

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { DiagnosticPlate } from "@/components/diagnostic-plate"
 import { PublishedPlate } from "@/components/published-plate"
 import { GbifLine } from "@/components/gbif-line"
+import { SourceLines } from "@/components/source-lines"
 import { PlacementPanels } from "@/components/placement-panels"
 import { PlateFigure } from "@/components/plate-step"
 import { ScientificName } from "@/components/scientific-name"
@@ -125,6 +126,11 @@ export function ResultPanel({
               </CardTitle>
               <p className="text-sm">{chosen.taxon.commonNames.join(", ")}</p>
               <GbifLine name={chosen.taxon.scientificName} nameKind={chosen.taxon.nameKind} />
+              <SourceLines
+                key={`${chosen.taxon.id}:${chosen.taxon.nameKind ?? "species"}`}
+                name={chosen.taxon.scientificName}
+                nameKind={chosen.taxon.nameKind}
+              />
             </CardHeader>
             <CardContent className="space-y-3">
               <p>{chosen.taxon.summary}</p>
