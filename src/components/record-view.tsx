@@ -113,7 +113,7 @@ export function RecordView({ id }: { id: string }) {
         <Badge variant="outline">{record.reviewLabel}</Badge>
       </div>
 
-      <div className="grid grid-cols-2 items-start gap-3">
+      <div className="grid grid-cols-1 items-start gap-3 md:grid-cols-2">
         <DiagnosticPlate observation={record.observation} />
         <PublishedPlate name={record.scientificName} stored={record.nameImage ?? null} />
       </div>

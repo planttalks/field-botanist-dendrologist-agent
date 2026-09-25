@@ -91,7 +91,7 @@ export function ResultPanel({
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 items-start gap-3">
+      <div className="grid grid-cols-1 items-start gap-3 md:grid-cols-2">
         <DiagnosticPlate observation={observation} />
         <PublishedPlate name={sheetName} onPlate={onNameImage} />
       </div>
@@ -100,7 +100,7 @@ export function ResultPanel({
         <section className="space-y-2">
           <h2 className="section-rule font-serif text-xl">Illustration plate</h2>
           <p className="text-sm leading-relaxed">
-            Traced from the photographs on the Plate step. The diagnostic plate is the schematic of the marked characters.
+            The photograph plate is traced from the views on the Plate step. The diagnostic plate is an ink plate of the scored characters. It is not a drawing of this specimen. It is not a copy of a published plate.
           </p>
           <PlateFigure status={plateStatus} url={plateUrl} error={plateError} caption={plateCaption} />
         </section>

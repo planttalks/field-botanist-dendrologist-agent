@@ -15,7 +15,7 @@ Confirm any name intended for publication in [POWO](https://powo.science.kew.org
 - The region may come from the phone, or it may be selected by hand. If place is omitted, no geographic flag is set. A missing GPS point stays missing. Uncertainty in meters is not invented.
 - A photograph may be attached. A warning is shown if the frame is soft, dark or overexposed. The frame may still be kept.
 - Only observed characters are scored. Unknown is not scored as a clash. Score the margin of the lobe, not the sinus.
-- The schematic plate draws only the characters that were marked. A published illustration of the sheet name may sit beside it. That figure is not a drawing of this specimen.
+- The diagnostic schematic is an ink plate of the characters that were scored. It is not a drawing of the specimen. It is not a copy of a published plate. A published illustration of the sheet name may sit beside it. The two figures stay separate.
 - The pen-and-ink plate is traced from the uploaded views (habit, leaf, flower or fruit, close detail). An empty view stays empty and keeps its label. Measurements and notes are printed as text. They are not drawn.
 - The record stores a ranked name. It stores the traits that fit and the traits that do not fit. A review line is added when a specialist should examine the plant.
 - Poison warnings are given for yew, oleander, castor, bracken, lantana fruit, ginkgo seed and mango sap. The sheet does not state that a plant is edible.
