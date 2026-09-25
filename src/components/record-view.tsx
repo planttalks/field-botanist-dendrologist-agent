@@ -107,6 +107,11 @@ export function RecordView({ id }: { id: string }) {
         <Badge variant="outline">{record.reviewLabel}</Badge>
       </div>
 
+      <div className="grid grid-cols-2 items-start gap-3">
+        <DiagnosticPlate observation={record.observation} />
+        <PublishedPlate name={record.scientificName} stored={record.nameImage ?? null} />
+      </div>
+
       {record.scientificName ? (
         <PlacementPanels
           key={`${record.id}:${record.scientificName}`}
@@ -166,11 +171,6 @@ export function RecordView({ id }: { id: string }) {
           </ul>
         ) : null}
       </div>
-      <div className="grid items-start gap-4 md:grid-cols-2">
-        <DiagnosticPlate observation={record.observation} />
-        <PublishedPlate name={record.scientificName} stored={record.nameImage ?? null} />
-      </div>
-
       <dl className="grid gap-4 border-y border-foreground/30 py-4 text-sm sm:grid-cols-2">
         <div>
           <dt className="sheet-kicker">Coordinates</dt>

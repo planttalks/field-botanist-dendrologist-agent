@@ -86,7 +86,14 @@ export function ResultPanel({
     onChosen(chosenId)
   }, [chosenId, onChosen])
 
+  const sheetName = chosen && !identification.noMatch ? chosen.taxon.scientificName : null
+
   return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 items-start gap-3">
+        <DiagnosticPlate observation={observation} />
+        <PublishedPlate name={sheetName} onPlate={onNameImage} />
+      </div>
     <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
       <div className="order-2 space-y-5 lg:order-1">
         <section className="space-y-2">
@@ -96,13 +103,6 @@ export function ResultPanel({
           </p>
           <PlateFigure status={plateStatus} url={plateUrl} error={plateError} caption={plateCaption} />
         </section>
-        <div className="grid items-start gap-4 md:grid-cols-2">
-          <DiagnosticPlate observation={observation} />
-          <PublishedPlate
-            name={chosen && !identification.noMatch ? chosen.taxon.scientificName : null}
-            onPlate={onNameImage}
-          />
-        </div>
       </div>
       <div className="order-1 space-y-4 lg:order-2">
         {identification.noMatch ? (
@@ -353,6 +353,7 @@ export function ResultPanel({
           </div>
         )}
       </div>
+    </div>
     </div>
   )
 }
