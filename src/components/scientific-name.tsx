@@ -15,7 +15,9 @@ export function ScientificName({
   const aggregate = taxon?.nameKind === "aggregate"
   return (
     <span className={className}>
-      <em lang="la">{binomial}</em>
+      <em lang="la" className="font-serif italic">
+        {binomial}
+      </em>
       {aggregate ? " agg." : null}
     </span>
   )

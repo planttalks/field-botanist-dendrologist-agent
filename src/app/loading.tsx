@@ -1,3 +1,3 @@
 export default function Loading() {
-  return <p className="text-sm text-muted-foreground">Opening the sheet...</p>
+  return <p className="text-sm">Opening the sheet.</p>
 }

@@ -365,16 +365,16 @@ function plateSentence(observation: Observation): string {
 export function DiagnosticPlate({ observation }: { observation: Observation }) {
   const sentence = plateSentence(observation)
   return (
-    <figure className="rounded-xl border bg-card p-3 text-foreground">
-      <figcaption className="mb-2 flex items-baseline justify-between gap-3">
+    <figure className="ink-frame p-3 text-foreground">
+      <figcaption className="mb-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 border-b border-foreground/25 pb-2">
         <span className="font-serif text-lg">Diagnostic plate</span>
-        <span className="text-xs text-muted-foreground">Schematic. Unmarked parts are not drawn.</span>
+        <span className="text-xs">Schematic. Unmarked parts are not drawn.</span>
       </figcaption>
       <svg viewBox="0 0 420 290" role="img" aria-label={sentence} className="h-auto w-full">
         <Subject observation={observation} />
         <BarkStrip bark={observation.bark} />
       </svg>
-      <p className="mt-2 text-sm text-muted-foreground">{sentence}</p>
+      <p className="mt-2 text-sm leading-relaxed">{sentence}</p>
     </figure>
   )
 }

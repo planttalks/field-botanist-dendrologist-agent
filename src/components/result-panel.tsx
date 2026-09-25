@@ -82,17 +82,18 @@ export function ResultPanel({
   }, [chosenId, onChosen])
 
   return (
-    <div className="space-y-6">
-      <section className="space-y-2">
-        <h2 className="font-serif text-xl">Illustration plate</h2>
-        <p className="text-sm text-muted-foreground">
-          Traced from the photos on the Plate step. The diagnostic plate is still the schematic from the characters.
-        </p>
-        <PlateFigure status={plateStatus} url={plateUrl} error={plateError} caption={plateCaption} />
-      </section>
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,18rem)_minmax(0,1fr)]">
-      <DiagnosticPlate observation={observation} />
-      <div className="space-y-4">
+    <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+      <div className="order-2 space-y-5 lg:order-1">
+        <section className="space-y-2">
+          <h2 className="section-rule font-serif text-xl">Illustration plate</h2>
+          <p className="text-sm leading-relaxed">
+            Traced from the photographs on the Plate step. The diagnostic plate is the schematic of the marked characters.
+          </p>
+          <PlateFigure status={plateStatus} url={plateUrl} error={plateError} caption={plateCaption} />
+        </section>
+        <DiagnosticPlate observation={observation} />
+      </div>
+      <div className="order-1 space-y-4 lg:order-2">
         {identification.noMatch ? (
           <Alert>
             <AlertTitle>No name on this sheet fits</AlertTitle>
@@ -101,9 +102,9 @@ export function ResultPanel({
             </AlertDescription>
           </Alert>
         ) : chosen ? (
-          <Card>
+          <Card className="label-sheet rounded-none border-foreground shadow-none">
             <CardHeader>
-              <CardDescription>{chosen.taxon.family}</CardDescription>
+              <CardDescription className="sheet-kicker text-foreground">{chosen.taxon.family}</CardDescription>
               <CardTitle>
                 <ScientificName
                   name={chosen.taxon.scientificName}
@@ -111,7 +112,7 @@ export function ResultPanel({
                   className="font-serif text-2xl font-medium"
                 />
               </CardTitle>
-              <p className="text-sm text-muted-foreground">{chosen.taxon.commonNames.join(", ")}</p>
+              <p className="text-sm">{chosen.taxon.commonNames.join(", ")}</p>
               <GbifLine name={chosen.taxon.scientificName} nameKind={chosen.taxon.nameKind} />
             </CardHeader>
             <CardContent className="space-y-3">
@@ -194,7 +195,7 @@ export function ResultPanel({
         {pointMissing ? <p className="text-sm">The point is missing.</p> : null}
 
         {identification.split ? (
-          <fieldset className="space-y-2 rounded-xl border p-3">
+          <fieldset className="ink-frame space-y-2 p-3">
             <legend className="px-1 text-sm font-medium">These names are close. Check this.</legend>
             <p className="text-sm">{identification.split.prompt}</p>
             <div className="flex flex-wrap gap-2">
@@ -215,7 +216,7 @@ export function ResultPanel({
 
         {identification.candidates.length > 0 ? (
           <div className="space-y-2">
-            <h3 className="text-sm font-medium">{identification.noMatch ? "Poor fits" : "Other names on the sheet"}</h3>
+            <h3 className="section-rule font-serif text-lg">{identification.noMatch ? "Poor fits" : "Other names on the sheet"}</h3>
             <ul className="space-y-2">
               {identification.candidates.map((candidate, index) => {
                 const selected = candidate.taxon.id === chosenId
@@ -226,7 +227,7 @@ export function ResultPanel({
                   })
                   .filter((name): name is string => !!name)
                 return (
-                  <li key={candidate.taxon.id} className="rounded-xl border p-3">
+                  <li key={candidate.taxon.id} className="border-b border-foreground/25 py-3">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div>
                         <p className="text-xs text-muted-foreground">
@@ -332,7 +333,6 @@ export function ResultPanel({
             </Button>
           </div>
         )}
-      </div>
       </div>
     </div>
   )

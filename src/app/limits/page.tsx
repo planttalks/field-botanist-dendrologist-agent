@@ -8,15 +8,16 @@ export const metadata: Metadata = {
 export default function LimitsPage() {
   return (
     <article className="max-w-2xl space-y-6">
-      <header className="space-y-2">
-        <h1 className="font-serif text-3xl tracking-tight">Limits</h1>
-        <p>
+      <header className="space-y-2 border-b border-foreground/35 pb-4">
+        <p className="sheet-kicker">Scope of this worksheet</p>
+        <h1 className="font-serif text-3xl leading-tight tracking-tight">Limits</h1>
+        <p className="leading-relaxed">
           Field Sheet is a worksheet. It ranks a short worldwide list from characters you mark. It is not a flora, a herbarium or a permit.
         </p>
       </header>
 
       <section className="space-y-2">
-        <h2 className="font-serif text-xl">Safety</h2>
+        <h2 className="section-rule font-serif text-xl">Safety</h2>
         <ul className="list-disc space-y-2 pl-5 text-sm leading-relaxed">
           <li>Do not eat, brew or dose anything because a result named it.</li>
           <li>Yew, oleander, castor, bracken, lantana fruit, ginkgo seed and mango sap carry their own poison warnings when they sit near the top.</li>
@@ -29,17 +30,17 @@ export default function LimitsPage() {
       </section>
 
       <section className="space-y-2">
-        <h2 className="font-serif text-xl">Coverage</h2>
+        <h2 className="section-rule font-serif text-xl">Coverage</h2>
         <p className="text-sm leading-relaxed">
           The list includes street trees, widespread weeds, a few tropical crops, conifers, palms and mangroves, plus a handful of woody plants from New Guinea highland forest and Taiwan wetlands. It will miss most local endemics. When nothing fits, save the record unidentified. A phone in western New Guinea is read as the Pacific islands, not as Southeast Asia. The boxes stay coarse.
         </p>
         <p className="text-sm leading-relaxed">
-          Papua New Guinea and Taiwan are in the region list. They are not the whole product. A user there gets the same questions as a user in Lisbon or Chicago.
+          Papua New Guinea and Taiwan are in the region list. They are not the full coverage of this worksheet. The same questions are used in those regions, in Lisbon and in Chicago.
         </p>
       </section>
 
       <section className="space-y-2">
-        <h2 className="font-serif text-xl">Offline</h2>
+        <h2 className="section-rule font-serif text-xl">Offline</h2>
         <p className="text-sm leading-relaxed">
           After the worksheet copy is stored on this phone, these parts work with no signal: the character key, the schematic plate, the ink plate from photos already on the phone, the journal, camera or file upload and a region you pick by hand. Records stay in this browser. The copy is not a record. If it fails, the footer says no record was written.
         </p>
@@ -49,7 +50,7 @@ export default function LimitsPage() {
       </section>
 
       <section className="space-y-2">
-        <h2 className="font-serif text-xl">Sources</h2>
+        <h2 className="section-rule font-serif text-xl">Sources</h2>
         <p className="text-sm leading-relaxed">
           The names on the sheet are a local list, written to match binomials used by POWO and WFO. They will lag those sites. When a network exists, the top sheet name is also checked on GBIF&apos;s public species API. No API key. The GBIF accepted name, rank and status sit beside the sheet name. The sheet name is not replaced. A hybrid or an aggregate is not rewritten into a species it is not. If the phone is offline or GBIF fails, the check says it did not run.
         </p>
@@ -82,14 +83,14 @@ export default function LimitsPage() {
       </section>
 
       <section className="space-y-2">
-        <h2 className="font-serif text-xl">Illustration plate</h2>
+        <h2 className="section-rule font-serif text-xl">Illustration plate</h2>
         <p className="text-sm leading-relaxed">
           The ink plate traces photographs you upload. It does not draw an organ that is missing, and it does not call an image model. Notes for pubescence, stigmas, chambers and scale are printed. They are not turned into extra drawing. The schematic plate draws only characters you marked. A missing shape, vein pattern or needle count stays missing.
         </p>
       </section>
 
       <section className="space-y-2">
-        <h2 className="font-serif text-xl">Your records</h2>
+        <h2 className="section-rule font-serif text-xl">Your records</h2>
         <p className="text-sm leading-relaxed">
           Photos and notes stay in this browser. There is no account and no database. A CSV export is a field hypothesis. The date is when the sheet was saved. A blank locality stays blank. If the phone shares a point, the uncertainty in meters is left blank. If it does not, the point is missing. Nothing is invented.
         </p>

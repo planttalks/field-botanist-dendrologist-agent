@@ -79,10 +79,11 @@ export function JournalBrowser() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+      <div className="flex flex-wrap items-end justify-between gap-3 border-b border-foreground/35 pb-4">
         <div>
-          <h1 className="font-serif text-3xl tracking-tight">Journal</h1>
-          <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+          <p className="sheet-kicker">Local records</p>
+          <h1 className="mt-1 font-serif text-3xl leading-tight tracking-tight">Journal</h1>
+          <p className="mt-2 max-w-xl text-sm leading-relaxed">
             Records stay in this browser. Clearing site data clears them. Export before you rely on a single phone.
           </p>
         </div>
@@ -116,7 +117,7 @@ export function JournalBrowser() {
       ) : null}
 
       {records.length === 0 && !error ? (
-        <div className="rounded-xl border border-dashed p-6">
+        <div className="ink-empty">
           <h2 className="font-serif text-xl">No specimens yet</h2>
           <p className="mt-2 max-w-lg text-sm">
             An identification can be saved even when the name is uncertain. Start a sheet and choose Save as unidentified if the key does not fit.
@@ -127,28 +128,34 @@ export function JournalBrowser() {
         </div>
       ) : null}
 
-      <ul className="space-y-3">
+      {records.length > 0 ? (
+      <ul className="border-t border-foreground">
         {records.map((record) => (
-          <li key={record.id}>
-            <Link href={`/journal#${record.id}`} className="block rounded-xl border bg-card p-4 hover:bg-muted">
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div>
-                  <p className="font-serif text-lg">
-                    <ScientificName name={record.scientificName} taxonId={record.taxonId} />
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(record.createdAt).toLocaleString()}
-                    {". "}
-                    {record.locality || "Locality not recorded"}
-                    {record.region ? `. ${regionLabel(record.region)}` : ""}
-                  </p>
-                </div>
-                <Badge variant="outline">{record.reviewLabel}</Badge>
-              </div>
+          <li key={record.id} className="border-b border-foreground/30">
+            <Link
+              href={`/journal#${record.id}`}
+              className="grid gap-1 py-3 sm:grid-cols-[10.5rem_minmax(0,1fr)_auto] sm:items-baseline sm:gap-4"
+            >
+              <time className="sheet-kicker" dateTime={record.createdAt}>
+                {new Date(record.createdAt).toLocaleDateString()}
+              </time>
+              <span>
+                <span className="font-serif text-lg">
+                  <ScientificName name={record.scientificName} taxonId={record.taxonId} />
+                </span>
+                <span className="mt-0.5 block text-sm">
+                  {record.locality || "Locality not recorded"}
+                  {record.region ? `. ${regionLabel(record.region)}` : ""}
+                </span>
+              </span>
+              <Badge variant="outline" className="w-fit">
+                {record.reviewLabel}
+              </Badge>
             </Link>
           </li>
         ))}
       </ul>
+      ) : null}
     </div>
   )
 }

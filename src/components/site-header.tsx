@@ -2,7 +2,6 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { buttonVariants } from "@/components/ui/button"
 import { cn } from "cn"
 
 const LINKS = [
@@ -15,18 +14,18 @@ export function SiteHeader() {
   const pathname = usePathname()
 
   return (
-    <header className="border-b border-border bg-card/80">
+    <header className="border-b-[3px] border-double border-foreground bg-background">
       <a
         href="#content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-card focus:px-3 focus:py-2"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-card focus:px-3 focus:py-2"
       >
         Skip to content
       </a>
-      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-4 py-3">
-        <Link href="/" className="font-serif text-xl tracking-tight text-foreground">
+      <div className="mx-auto flex max-w-4xl flex-wrap items-end justify-between gap-x-4 gap-y-1 px-4 py-3 sm:px-8">
+        <Link href="/" className="font-serif text-[1.65rem] leading-none tracking-tight text-foreground">
           Field Sheet
         </Link>
-        <nav className="flex flex-wrap gap-1" aria-label="Main">
+        <nav className="flex flex-wrap" aria-label="Main">
           {LINKS.map((link) => {
             const active = pathname === link.href || pathname.startsWith(`${link.href}/`)
             return (
@@ -34,7 +33,10 @@ export function SiteHeader() {
                 key={link.href}
                 href={link.href}
                 aria-current={active ? "page" : undefined}
-                className={cn(buttonVariants({ variant: active ? "secondary" : "ghost", size: "lg" }), "h-11 px-3")}
+                className={cn(
+                  "inline-flex h-11 items-center px-2.5 text-sm underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+                  active ? "font-medium underline decoration-2 decoration-foreground" : "hover:underline",
+                )}
               >
                 {link.label}
               </Link>

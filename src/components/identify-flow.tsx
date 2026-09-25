@@ -393,31 +393,37 @@ export function IdentifyFlow() {
 
   return (
     <div className="space-y-6 pb-28">
-      <div>
-        <h1 className="font-serif text-3xl tracking-tight">New sheet</h1>
-        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-          Place, a photo if you have one, the characters you can see, then a plate traced from the angles you supply. The name is a field hypothesis.
+      <header className="space-y-2 border-b border-foreground/35 pb-4">
+        <p className="sheet-kicker">Worksheet</p>
+        <h1 className="font-serif text-3xl leading-tight tracking-tight">New sheet</h1>
+        <p className="max-w-2xl text-sm leading-relaxed">
+          Record the place. Add a photograph if one is available. Mark only visible organs. Then prepare the plate. The name is a field hypothesis.
         </p>
-      </div>
+      </header>
 
-      <ol className="flex flex-wrap gap-2" aria-label="Steps">
+      <ol className="grid grid-cols-5 border border-foreground" aria-label="Steps">
         {STEPS.map((item, index) => {
           const active = item.id === step
           const done = index < stepIndex
           return (
-            <li key={item.id}>
+            <li key={item.id} className="border-r border-foreground last:border-r-0">
               <button
                 type="button"
                 disabled={!done && !active}
                 onClick={() => {
                   if (done) setStep(item.id)
                 }}
-                className={`min-h-11 rounded-full border px-3 text-sm ${
-                  active ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"
-                } disabled:opacity-60`}
+                className={`flex min-h-12 w-full flex-col items-center justify-center px-0.5 py-1 text-center text-[0.7rem] leading-tight sm:text-sm ${
+                  active
+                    ? "bg-foreground text-background"
+                    : done
+                      ? "bg-card text-foreground"
+                      : "bg-background text-muted-foreground"
+                }`}
                 aria-current={active ? "step" : undefined}
               >
-                {index + 1}. {item.label}
+                <span className="text-[0.62rem] tracking-widest">{index + 1}</span>
+                {item.label}
               </button>
             </li>
           )
@@ -440,7 +446,7 @@ export function IdentifyFlow() {
             <Label htmlFor="region">Region</Label>
             <select
               id="region"
-              className="h-11 rounded-lg border border-input bg-card px-3 text-sm"
+              className="field-select"
               value={region}
               onChange={(event) => {
                 const value = event.target.value
@@ -490,11 +496,11 @@ export function IdentifyFlow() {
 
       {step === "photo" ? (
         <div className="space-y-4">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm leading-relaxed">
             The photo is the voucher. It is not sent anywhere. You can skip it and still use the key. The camera and a file upload work with no signal.
           </p>
           <div className="flex flex-wrap gap-2">
-            <Label className="h-11 cursor-pointer rounded-lg border bg-primary px-4 py-2 text-primary-foreground">
+            <Label className="h-11 cursor-pointer rounded-sm border bg-primary px-4 py-2 text-primary-foreground">
               Take a photo
               <input
                 className="sr-only"
@@ -504,7 +510,7 @@ export function IdentifyFlow() {
                 onChange={(event) => void onFile(event.target.files?.[0])}
               />
             </Label>
-            <Label className="h-11 cursor-pointer rounded-lg border bg-card px-4 py-2">
+            <Label className="h-11 cursor-pointer rounded-sm border border-foreground/45 bg-card px-4 py-2">
               Upload a photo
               <input
                 className="sr-only"
@@ -516,7 +522,7 @@ export function IdentifyFlow() {
           </div>
           <div aria-live="polite" className="min-h-16">
             {photoStatus === "empty" ? (
-              <div className="rounded-xl border border-dashed p-6 text-sm text-muted-foreground">
+              <div className="ink-empty text-sm">
                 No photo yet. Leaves, flowers, fruit and bark are more useful than a distant crown.
               </div>
             ) : null}
@@ -531,7 +537,7 @@ export function IdentifyFlow() {
               <div className="space-y-3">
                 {/* User photos are local data URLs, not remote content images. */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={photo} alt="The plant frame you chose" className="max-h-80 w-full rounded-xl border object-contain" />
+                <img src={photo} alt="The plant frame you chose" className="plate-ground max-h-80 w-full object-contain" />
                 {quality?.pass ? (
                   <p className="text-sm">The frame is sharp enough to keep.</p>
                 ) : (
@@ -568,7 +574,7 @@ export function IdentifyFlow() {
             onChange={(value) => setCharacter("habit", value)}
           />
           <div className="space-y-4">
-            <h2 className="font-serif text-xl">Leaves</h2>
+            <h2 className="section-rule font-serif text-xl">Leaves</h2>
             <ChipGroup
               legend="Arrangement"
               emphasized={emphasis === "leaves"}
@@ -618,7 +624,7 @@ export function IdentifyFlow() {
             />
           </div>
           <div className="space-y-4">
-            <h2 className="font-serif text-xl">Bark, buds and roots</h2>
+            <h2 className="section-rule font-serif text-xl">Bark, buds and roots</h2>
             <ChipGroup
               legend="Bark"
               emphasized={emphasis === "wood"}
@@ -637,7 +643,7 @@ export function IdentifyFlow() {
             <ChipGroup legend="Roots" value={observation.roots} options={ROOTS} onChange={(value) => setCharacter("roots", value)} />
           </div>
           <div className="space-y-4">
-            <h2 className="font-serif text-xl">Flowers, fruit and place</h2>
+            <h2 className="section-rule font-serif text-xl">Flowers, fruit and place</h2>
             <ChipGroup
               legend="Flowers or cones"
               emphasized={emphasis === "flower"}
@@ -742,8 +748,8 @@ export function IdentifyFlow() {
         )
       ) : null}
 
-      <div className="fixed inset-x-0 bottom-0 z-20 border-t bg-background/95 px-4 py-3 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl gap-2">
+      <div className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-foreground bg-background px-4 py-3 sm:px-8">
+        <div className="mx-auto flex max-w-4xl gap-2">
           <Button
             type="button"
             variant="outline"

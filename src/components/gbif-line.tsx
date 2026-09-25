@@ -34,7 +34,7 @@ export function GbifLine({ name, nameKind }: { name: string; nameKind?: NameKind
       return (
         <div className="space-y-1 text-sm">
           <p>
-            GBIF accepted name <em lang="la">{view.acceptedName}</em>
+            GBIF accepted name <em lang="la" className="font-serif">{view.acceptedName}</em>
             {". "}
             Rank {view.rankLabel}. Status {view.statusLabel}.{" "}
             <a className="underline underline-offset-4" href={view.url}>

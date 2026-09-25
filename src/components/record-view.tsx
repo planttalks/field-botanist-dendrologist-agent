@@ -67,7 +67,8 @@ export function RecordView({ id }: { id: string }) {
   if (!record) {
     return (
       <div className="space-y-3">
-        <h1 className="font-serif text-3xl">No record here</h1>
+        <p className="sheet-kicker">Journal</p>
+        <h1 className="font-serif text-3xl leading-tight">No record here</h1>
         <p className="max-w-lg text-sm">
           Nothing with that id is stored in this browser. It may have been deleted, or you may be on a different device.
         </p>
@@ -80,10 +81,10 @@ export function RecordView({ id }: { id: string }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+      <div className="label-sheet flex flex-wrap items-start justify-between gap-3 rounded-none border border-foreground p-4">
         <div>
-          <p className="text-sm text-muted-foreground">{record.family ?? "No family stored"}</p>
-          <h1 className="font-serif text-3xl">
+          <p className="sheet-kicker">{record.family ?? "No family stored"}</p>
+          <h1 className="mt-1 font-serif text-3xl leading-tight">
             <ScientificName name={record.scientificName} taxonId={record.taxonId} />
           </h1>
           {record.scientificName ? (
@@ -94,7 +95,7 @@ export function RecordView({ id }: { id: string }) {
               />
             </div>
           ) : null}
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm">
             {new Date(record.createdAt).toLocaleString()}
             {". "}
             {record.locality || "Locality not recorded"}
@@ -111,18 +112,18 @@ export function RecordView({ id }: { id: string }) {
 
       {record.illustration?.dataUrl ? (
         <figure className="space-y-2">
-          <h2 className="font-serif text-xl">Illustration plate</h2>
+          <h2 className="section-rule font-serif text-xl">Illustration plate</h2>
           {/* Local data URL stored with this record. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={record.illustration.dataUrl}
             alt="Pen and ink plate traced from the uploaded photos"
-            className="w-full rounded-xl border bg-white"
+            className="plate-ground w-full"
           />
           <figcaption className="whitespace-pre-line text-sm leading-relaxed">{record.illustration.caption}</figcaption>
         </figure>
       ) : record.illustration ? (
-        <div className="space-y-2 rounded-xl border border-dashed p-6 text-sm">
+        <div className="ink-empty space-y-2 text-sm">
           <h2 className="font-serif text-xl">Illustration plate</h2>
           <p className="text-muted-foreground">
             {record.illustration.dropped
@@ -132,7 +133,7 @@ export function RecordView({ id }: { id: string }) {
           <p className="whitespace-pre-line leading-relaxed">{record.illustration.caption}</p>
         </div>
       ) : (
-        <div className="rounded-xl border border-dashed p-6 text-sm text-muted-foreground">
+        <div className="ink-empty text-sm">
           No illustration plate was saved with this record.
         </div>
       )}
@@ -142,9 +143,9 @@ export function RecordView({ id }: { id: string }) {
           {record.photoDataUrl ? (
             // Local data URL from this browser's journal.
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={record.photoDataUrl} alt="Photo stored with this record" className="max-h-96 w-full rounded-xl border object-contain" />
+            <img src={record.photoDataUrl} alt="Photo stored with this record" className="plate-ground max-h-96 w-full object-contain" />
           ) : (
-            <div className="rounded-xl border border-dashed p-6 text-sm text-muted-foreground">
+            <div className="ink-empty text-sm">
               {record.photoDropped ? "The photo was too large to store with this record." : "No photo was attached."}
             </div>
           )}
@@ -159,9 +160,9 @@ export function RecordView({ id }: { id: string }) {
         <DiagnosticPlate observation={record.observation} />
       </div>
 
-      <dl className="grid gap-3 text-sm sm:grid-cols-2">
+      <dl className="grid gap-4 border-y border-foreground/30 py-4 text-sm sm:grid-cols-2">
         <div>
-          <dt className="text-muted-foreground">Coordinates</dt>
+          <dt className="sheet-kicker">Coordinates</dt>
           <dd>
             {record.latitude !== null && record.longitude !== null
               ? `${record.latitude.toFixed(5)}, ${record.longitude.toFixed(5)} (WGS84, uncertainty not recorded)`
@@ -169,21 +170,21 @@ export function RecordView({ id }: { id: string }) {
           </dd>
         </div>
         <div>
-          <dt className="text-muted-foreground">Elevation</dt>
+          <dt className="sheet-kicker">Elevation</dt>
           <dd>{record.elevationM !== null ? `${record.elevationM} m` : "Not recorded"}</dd>
         </div>
         <div>
-          <dt className="text-muted-foreground">Habitat</dt>
+          <dt className="sheet-kicker">Habitat</dt>
           <dd>{record.habitat || "Not recorded"}</dd>
         </div>
         <div>
-          <dt className="text-muted-foreground">Notes</dt>
+          <dt className="sheet-kicker">Notes</dt>
           <dd>{record.notes || "None"}</dd>
         </div>
       </dl>
 
       <div>
-        <h2 className="font-serif text-xl">Characters</h2>
+        <h2 className="section-rule font-serif text-xl">Characters</h2>
         <ul className="mt-2 grid gap-1 text-sm sm:grid-cols-2">
           {KEYS.filter((key) => !isSkipped(record.observation[key])).map((key) => (
             <li key={key}>{phraseFor(key, record.observation[key])}</li>
@@ -193,7 +194,7 @@ export function RecordView({ id }: { id: string }) {
 
       {record.candidates.length > 0 ? (
         <div>
-          <h2 className="font-serif text-xl">Names considered</h2>
+          <h2 className="section-rule font-serif text-xl">Names considered</h2>
           <ul className="mt-2 space-y-1 text-sm">
             {record.candidates.map((candidate) => (
               <li key={candidate.taxonId}>

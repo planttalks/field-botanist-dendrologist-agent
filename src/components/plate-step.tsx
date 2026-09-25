@@ -35,7 +35,7 @@ export function PlateFigure({
 }) {
   if (status === "empty") {
     return (
-      <div className="rounded-xl border border-dashed p-6 text-sm text-muted-foreground">
+      <div className="ink-empty text-sm">
         No photos yet. Each empty view stays blank and keeps its label. Notes print under the plate. They do not add a drawing.
       </div>
     )
@@ -63,7 +63,7 @@ export function PlateFigure({
       <img
         src={url}
         alt="Pen and ink plate traced from the uploaded photos"
-        className="w-full rounded-xl border bg-white"
+        className="plate-ground w-full"
       />
       <figcaption className="whitespace-pre-line text-sm leading-relaxed">{caption}</figcaption>
       {status === "loading" ? (
@@ -121,7 +121,7 @@ export function PlateStep({
     <div className="space-y-8">
       <section className="space-y-3">
         <div>
-          <h2 className="font-serif text-xl">Angles</h2>
+          <h2 className="section-rule font-serif text-xl">Angles</h2>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
             Four views. Skip any you do not have. A missing view stays empty. The plate will not invent it.
           </p>
@@ -130,7 +130,7 @@ export function PlateStep({
           {PLATE_SLOTS.map((slot) => {
             const draft = slots[slot.id]
             return (
-              <section key={slot.id} className="space-y-3 rounded-xl border bg-card p-3">
+              <section key={slot.id} className="ink-frame space-y-3 p-3">
                 <div>
                   <h3 className="text-sm font-medium">
                     {slot.letter}. {slot.label}
@@ -138,7 +138,7 @@ export function PlateStep({
                   <p className="text-sm text-muted-foreground">{slot.hint}</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <Label className="flex h-11 cursor-pointer items-center rounded-lg border bg-primary px-3 text-sm text-primary-foreground">
+                  <Label className="flex h-11 cursor-pointer items-center rounded-sm border bg-primary px-3 text-sm text-primary-foreground">
                     Camera
                     <input
                       className="sr-only"
@@ -152,7 +152,7 @@ export function PlateStep({
                       }}
                     />
                   </Label>
-                  <Label className="flex h-11 cursor-pointer items-center rounded-lg border bg-card px-3 text-sm">
+                  <Label className="flex h-11 cursor-pointer items-center rounded-sm border border-foreground/45 bg-card px-3 text-sm">
                     Upload
                     <input
                       className="sr-only"
@@ -168,14 +168,14 @@ export function PlateStep({
                   {voucherUrl ? (
                     <button
                       type="button"
-                      className="h-11 rounded-lg border bg-card px-3 text-sm"
+                      className="h-11 rounded-sm border border-foreground/45 bg-card px-3 text-sm"
                       onClick={() => onUseVoucher(slot.id)}
                     >
                       Use the sheet photo
                     </button>
                   ) : null}
                   {draft.status === "ready" ? (
-                    <button type="button" className="h-11 rounded-lg border px-3 text-sm" onClick={() => onClear(slot.id)}>
+                    <button type="button" className="h-11 rounded-sm border border-foreground/45 px-3 text-sm" onClick={() => onClear(slot.id)}>
                       Clear
                     </button>
                   ) : null}
@@ -197,7 +197,7 @@ export function PlateStep({
                     <img
                       src={draft.dataUrl}
                       alt={`${slot.label} photo`}
-                      className="max-h-40 w-full rounded-lg border object-contain"
+                      className="plate-ground max-h-40 w-full object-contain"
                     />
                   ) : null}
                 </div>
@@ -209,7 +209,7 @@ export function PlateStep({
 
       <section className="space-y-4">
         <div>
-          <h2 className="font-serif text-xl">Specifics</h2>
+          <h2 className="section-rule font-serif text-xl">Specifics</h2>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
             Which organs have to appear, plus measurements and short notes. This text is printed with the description. It does not draw an organ.
           </p>
@@ -220,7 +220,7 @@ export function PlateStep({
             {PLATE_ORGANS.map((organ) => {
               const checked = specifics.organs.includes(organ.id)
               return (
-                <label key={organ.id} className="flex min-h-11 items-center gap-2 rounded-lg border bg-card px-3 text-sm">
+                <label key={organ.id} className="flex min-h-11 items-center gap-2 rounded-sm border border-foreground/40 bg-card px-3 text-sm">
                   <input
                     type="checkbox"
                     className="size-4 accent-current"

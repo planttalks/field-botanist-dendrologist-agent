@@ -21,7 +21,7 @@ export function ChipGroup({
     <fieldset
       className={cn(
         "space-y-2",
-        emphasized && "rounded-xl border border-primary/40 bg-primary/5 p-3",
+        emphasized && "border border-foreground bg-card p-3",
       )}
     >
       <legend className="text-sm font-medium">{legend}</legend>
@@ -36,7 +36,7 @@ export function ChipGroup({
               aria-pressed={selected}
               onClick={() => onChange(option.value)}
               className={cn(
-                "min-h-11 rounded-full border px-3 py-2 text-left text-sm focus-visible:ring-3 focus-visible:ring-ring focus-visible:outline-none",
+                "min-h-11 rounded-sm border px-3 py-2 text-left text-sm focus-visible:ring-3 focus-visible:ring-ring focus-visible:outline-none",
                 selected
                   ? "border-primary bg-primary text-primary-foreground"
                   : "border-border bg-card text-foreground hover:bg-muted",

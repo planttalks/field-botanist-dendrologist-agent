@@ -27,48 +27,62 @@ export function HomeScreen() {
     }
   }, [])
 
+  const journalLine =
+    count === null
+      ? "Reading the journal on this browser."
+      : error
+        ? "The journal cannot be read."
+        : count === 0
+          ? "No records on this browser."
+          : `${count} records saved on this browser.`
+
   return (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.7fr)]">
+    <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(16rem,0.85fr)]">
       <div className="space-y-5">
-        <p className="text-sm tracking-wide text-muted-foreground uppercase">Field worksheet</p>
-        <h1 className="max-w-xl font-serif text-4xl leading-tight tracking-tight sm:text-5xl">
-          Name the plant in front of you.
+        <p className="sheet-kicker">Place, organs, plate, name</p>
+        <h1 className="max-w-md font-serif text-3xl leading-[1.08] tracking-tight sm:text-4xl">
+          The specimen in view.
         </h1>
-        <p className="max-w-xl text-base leading-relaxed">
-          A pocket sheet for leaves, bark, flowers and fruit. It works in a city park, a mangrove and a highland forest. It does not only cover Papua New Guinea or Taiwan.
+        <p className="max-w-lg text-base leading-relaxed">
+          Record the locality. Mark only organs that are visible. The plate traces the photographs provided. The name is a field hypothesis.
         </p>
         <div className="flex flex-wrap gap-2">
           <Link href="/identify" className={cn(buttonVariants({ size: "lg" }), "h-11 px-4")}>
-            Start a sheet
+            Begin a sheet
           </Link>
           <Link href="/journal" className={cn(buttonVariants({ variant: "outline", size: "lg" }), "h-11 px-4")}>
-            Open the journal
+            Journal
           </Link>
         </div>
-        <ul className="max-w-xl space-y-2 text-sm">
-          <li>Photograph it, or skip the photo and use the key.</li>
-          <li>Mark only the characters you can actually see.</li>
-          <li>A plate can trace habit, leaf, flower and a detail. It will not draw a view you did not photograph.</li>
-          <li>Save a Darwin Core style record on this device.</li>
-          <li>Once the worksheet is stored on this phone, the key, both plates and the journal work with no signal. The GBIF name check does not.</li>
-        </ul>
+        <p className="max-w-lg border-t border-foreground/35 pt-3 text-sm leading-relaxed">
+          Do not eat a plant on the basis of this name. The sheet will not declare a new species.
+        </p>
       </div>
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-serif text-xl">Specimen label</CardTitle>
+      <Card className="label-sheet rounded-none border-foreground shadow-none ring-0">
+        <CardHeader className="border-b border-foreground/30 pb-3">
+          <CardTitle className="sheet-kicker font-sans font-bold tracking-[0.16em]">Field Sheet</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3 text-sm">
-          <p>Locality: wherever you are standing.</p>
-          <p>Name: a hypothesis, until someone checks it.</p>
-          <p>
-            Journal on this browser:{" "}
-            {count === null ? "checking..." : error ? "unavailable" : count === 0 ? "empty" : `${count} saved`}
+        <CardContent>
+          <dl className="space-y-3">
+            <div>
+              <dt className="sheet-kicker">Locality</dt>
+              <dd className="mt-1">The collection locality.</dd>
+            </div>
+            <div>
+              <dt className="sheet-kicker">Determination</dt>
+              <dd className="mt-1">A field hypothesis. Confirm the binomial in POWO or WFO.</dd>
+            </div>
+            <div>
+              <dt className="sheet-kicker">Journal</dt>
+              <dd className="mt-1">{journalLine}</dd>
+            </div>
+          </dl>
+          {error ? <p className="mt-3 text-destructive">{error}</p> : null}
+          <p className="mt-4">
+            <Link href="/limits" className="underline underline-offset-4">
+              Read the limits
+            </Link>
           </p>
-          {error ? <p className="text-destructive">{error}</p> : null}
-          <p>Do not eat a plant because this sheet named it. The sheet will not call a new species.</p>
-          <Link href="/limits" className="underline underline-offset-4">
-            Read the limits
-          </Link>
         </CardContent>
       </Card>
     </div>
