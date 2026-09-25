@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { DiagnosticPlate } from "@/components/diagnostic-plate"
+import { PublishedPlate } from "@/components/published-plate"
 import { GbifLine } from "@/components/gbif-line"
 import { PlacementPanels } from "@/components/placement-panels"
 import { PlateFigure } from "@/components/plate-step"
@@ -14,6 +15,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label"
 import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress"
 import { Textarea } from "@/components/ui/textarea"
+import type { BhlPlate } from "@/lib/bhl"
 import type { Identification } from "@/lib/identify"
 import { regionLabel, type Region } from "@/lib/regions"
 import { displayName, taxonById } from "@/lib/taxa"
@@ -47,6 +49,7 @@ export function ResultPanel({
   plateCaption,
   onChosen,
   pointMissing,
+  onBhlPlate,
 }: {
   observation: Observation
   region: Region | null
@@ -69,6 +72,7 @@ export function ResultPanel({
   plateCaption: string
   onChosen: (taxonId: string | null) => void
   pointMissing: boolean
+  onBhlPlate: (plate: BhlPlate | null) => void
 }) {
   const topId = identification.noMatch ? null : (identification.candidates[0]?.taxon.id ?? null)
   const signature = `${identification.noMatch ? "none" : "match"}:${identification.candidates.map((candidate) => candidate.taxon.id).join("|")}`
@@ -92,7 +96,13 @@ export function ResultPanel({
           </p>
           <PlateFigure status={plateStatus} url={plateUrl} error={plateError} caption={plateCaption} />
         </section>
-        <DiagnosticPlate observation={observation} />
+        <div className="grid items-start gap-4 md:grid-cols-2">
+          <DiagnosticPlate observation={observation} />
+          <PublishedPlate
+            name={chosen && !identification.noMatch ? chosen.taxon.scientificName : null}
+            onPlate={onBhlPlate}
+          />
+        </div>
       </div>
       <div className="order-1 space-y-4 lg:order-2">
         {identification.noMatch ? (

@@ -15,7 +15,7 @@ Confirm any name intended for publication in [POWO](https://powo.science.kew.org
 - The region may come from the phone, or it may be selected by hand. If place is omitted, no geographic flag is set. A missing GPS point stays missing. Uncertainty in meters is not invented.
 - A photograph may be attached. A warning is shown if the frame is soft, dark or overexposed. The frame may still be kept.
 - Only observed characters are scored. Unknown is not scored as a clash. Score the margin of the lobe, not the sinus.
-- The schematic plate draws only the characters that were marked.
+- The schematic plate draws only the characters that were marked. A published illustration may sit beside it. That figure is not a drawing of this specimen.
 - The pen-and-ink plate is traced from the uploaded views (habit, leaf, flower or fruit, close detail). An empty view stays empty and keeps its label. Measurements and notes are printed as text. They are not drawn.
 - The record stores a ranked name. It stores the traits that fit and the traits that do not fit. A review line is added when a specialist should examine the plant.
 - Poison warnings are given for yew, oleander, castor, bracken, lantana fruit, ginkgo seed and mango sap. The sheet does not state that a plant is edible.
@@ -49,7 +49,7 @@ npm run build
 
 `npm start` serves a production build on the same port.
 
-After the worksheet copy is stored on the phone, the character key, both plates and the journal open without a network. The GBIF check, the backbone comparison and the distribution map do not. A failed copy is not a saved record.
+After the worksheet copy is stored on the phone, the character key, both plates and the journal open without a network. The GBIF check, the backbone comparison, the distribution map and the published BHL plate do not. A failed copy is not a saved record.
 
 ## Backbone check and map
 
@@ -62,3 +62,13 @@ The classification shows family, genus and species. An infraspecific rank is add
 A geographic note is printed only when the World Checklist record includes one. The map is a GBIF occurrence image, with country counts from the same service. If a call fails, or the phone is offline, the sheet says that the check did not run or that the distribution was not retrieved. The sheet does not draw a range of its own.
 
 The taxon list is in `src/lib/taxa.ts`. The GBIF name line is in `src/lib/gbif.ts`. The backbone comparison is in `src/lib/backbone.ts`. The distribution call is in `src/lib/distribution.ts`.
+
+## Published illustration
+
+The schematic stays. It draws only the characters that were marked. When the sheet has a name, a second figure may show a published illustration of that name. The figure is not a drawing of this specimen. The sheet name is not replaced. A new species is not declared.
+
+The public Biodiversity Heritage Library API is `https://www.biodiversitylibrary.org/api3`. The operation is `GetNameMetadata`. That operation requires an API key. This sheet does not send a key. It does not call the API. It says that the BHL check did not run.
+
+If the phone is offline, the sheet says that the published plate was not retrieved. The same sentence is used when a call fails. If a response has no page that BHL marks as an illustration, the sheet says that no published plate was found. The sheet does not draw a stand-in plant.
+
+A returned image address can be stored with the record. The address is a BHL page image. It is not a photograph of this plant. The reader for that response is in `src/lib/bhl.ts`.

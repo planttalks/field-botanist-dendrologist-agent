@@ -1,3 +1,4 @@
+import { storeBhlPlate, type BhlPlate } from "./bhl"
 import type { Identification } from "./identify"
 import type { IllustrationPlate } from "./plate"
 import { regionLabel, type Region } from "./regions"
@@ -37,6 +38,7 @@ export interface Specimen {
   reviewText: string
   candidates: StoredCandidate[]
   illustration?: IllustrationPlate | null
+  bhlPlate?: BhlPlate | null
 }
 
 export class JournalError extends Error {
@@ -93,6 +95,7 @@ export interface SaveInput {
   identification: Identification
   taxonId: string | null
   illustration: IllustrationPlate | null
+  bhlPlate?: BhlPlate | null
 }
 
 export function saveSpecimen(input: SaveInput): Specimen {
@@ -141,6 +144,7 @@ export function saveSpecimen(input: SaveInput): Specimen {
       fit: candidate.max > 0 ? candidate.raw / candidate.max : 0,
     })),
     illustration: fitIllustration(input.illustration),
+    bhlPlate: storeBhlPlate(input.bhlPlate ?? null),
   }
 
   writeAll([specimen, ...existing])

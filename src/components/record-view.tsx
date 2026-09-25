@@ -7,6 +7,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { DiagnosticPlate } from "@/components/diagnostic-plate"
+import { PublishedPlate } from "@/components/published-plate"
 import { GbifLine } from "@/components/gbif-line"
 import { PlacementPanels } from "@/components/placement-panels"
 import { ScientificName } from "@/components/scientific-name"
@@ -147,26 +148,27 @@ export function RecordView({ id }: { id: string }) {
         </div>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div className="space-y-3">
-          {record.photoDataUrl ? (
-            // Local data URL from this browser's journal.
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={record.photoDataUrl} alt="Photo stored with this record" className="plate-ground max-h-96 w-full object-contain" />
-          ) : (
-            <div className="ink-empty text-sm">
-              {record.photoDropped ? "The photo was too large to store with this record." : "No photo was attached."}
-            </div>
-          )}
-          {record.qualityWarnings.length > 0 ? (
-            <ul className="list-disc space-y-1 pl-5 text-sm">
-              {record.qualityWarnings.map((warning) => (
-                <li key={warning}>{warning}</li>
-              ))}
-            </ul>
-          ) : null}
-        </div>
+      <div className="space-y-3">
+        {record.photoDataUrl ? (
+          // Local data URL from this browser's journal.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={record.photoDataUrl} alt="Photo stored with this record" className="plate-ground max-h-96 w-full object-contain" />
+        ) : (
+          <div className="ink-empty text-sm">
+            {record.photoDropped ? "The photo was too large to store with this record." : "No photo was attached."}
+          </div>
+        )}
+        {record.qualityWarnings.length > 0 ? (
+          <ul className="list-disc space-y-1 pl-5 text-sm">
+            {record.qualityWarnings.map((warning) => (
+              <li key={warning}>{warning}</li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
+      <div className="grid items-start gap-4 md:grid-cols-2">
         <DiagnosticPlate observation={record.observation} />
+        <PublishedPlate name={record.scientificName} stored={record.bhlPlate ?? null} />
       </div>
 
       <dl className="grid gap-4 border-y border-foreground/30 py-4 text-sm sm:grid-cols-2">

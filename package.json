@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start -p 43117 -H 0.0.0.0",
     "lint": "eslint",
-    "test": "tsx --test src/lib/identify.test.ts src/lib/plate.test.ts src/lib/gbif.test.ts src/lib/field-use.test.ts src/lib/backbone.test.ts src/lib/distribution.test.ts"
+    "test": "tsx --test src/lib/identify.test.ts src/lib/plate.test.ts src/lib/gbif.test.ts src/lib/field-use.test.ts src/lib/backbone.test.ts src/lib/distribution.test.ts src/lib/bhl.test.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

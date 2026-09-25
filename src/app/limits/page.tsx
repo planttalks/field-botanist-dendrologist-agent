@@ -45,7 +45,7 @@ export default function LimitsPage() {
           After the worksheet copy is stored on this phone, these parts work with no signal: the character key, the schematic plate, the ink plate from photos already on the phone, the journal, camera or file upload and a region you pick by hand. Records stay in this browser. The copy is not a record. If it fails, the footer says no record was written.
         </p>
         <p className="text-sm leading-relaxed">
-          These parts do not work offline. The GBIF name check does not run, and the sheet name stays. The checklist comparison and the distribution map also do not run. The sheet then says that the check did not run, or that the distribution was not retrieved. A first visit with an empty copy cannot open pages that were never stored. Add to Home Screen uses that same copy.
+          These parts do not work offline. The GBIF name check does not run, and the sheet name stays. The checklist comparison and the distribution map also do not run. The sheet then says that the check did not run, or that the distribution was not retrieved. The published BHL plate is not part of the offline copy. If the phone is offline, the sheet says that the published plate was not retrieved. A first visit with an empty copy cannot open pages that were never stored. Add to Home Screen uses that same copy.
         </p>
       </section>
 
@@ -94,6 +94,12 @@ export default function LimitsPage() {
             </a>{" "}
             for the World Flora Online Plant List.
           </li>
+          <li>
+            <a className="underline underline-offset-4" href="https://www.biodiversitylibrary.org/">
+              Biodiversity Heritage Library
+            </a>{" "}
+            for a published illustration of the sheet name. The API requires a key, so this sheet does not call it.
+          </li>
         </ul>
       </section>
 
@@ -101,6 +107,9 @@ export default function LimitsPage() {
         <h2 className="section-rule font-serif text-xl">Illustration plate</h2>
         <p className="text-sm leading-relaxed">
           The ink plate traces photographs you upload. It does not draw an organ that is missing, and it does not call an image model. Notes for pubescence, stigmas, chambers and scale are printed. They are not turned into extra drawing. The schematic plate draws only characters you marked. A missing shape, vein pattern or needle count stays missing.
+        </p>
+        <p className="text-sm leading-relaxed">
+          A published illustration from the Biodiversity Heritage Library may sit beside the schematic when the sheet has a name. It is a plate of that name from a published work. It is not a drawing of this specimen. The public BHL API requires a key. This sheet does not send a key, so the check does not run. The sheet says so. It does not invent a plate.
         </p>
       </section>
 
